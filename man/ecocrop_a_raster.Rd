@@ -28,8 +28,9 @@ ecocrop_a_raster(crop, st_clim_all = NULL, st_tmin = NULL, st_tavg = NULL,
 run ecocrop for all cells in a passed raster stack for the specified crop
 }
 \details{
-based on code from run_ecocrop() by ...
+based on code from run_ecocrop() by Adam Sparks
 }
 \examples{
-#ecocrop_a_raster('potato',st_clim)
+#takes a few mins to run
+#rast_potato_suit <- ecocrop_a_raster('potato',st_clim)
 }

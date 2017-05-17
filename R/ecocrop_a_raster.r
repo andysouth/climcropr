@@ -2,7 +2,7 @@
 #'
 #' run ecocrop for all cells in a passed raster stack for the specified crop
 #'
-#' based on code from run_ecocrop() by ...
+#' based on code from run_ecocrop() by Adam Sparks
 #'
 #' @param crop the crop either a name or ecocrop object
 #' @param st_clim_all single raster stack containing all climate inputs (see data(st_clim))
@@ -19,7 +19,8 @@
 #' @import dismo raster
 #'
 #' @examples
-#' #ecocrop_a_raster('potato',st_clim)
+#' #takes a few mins to run
+#' #rast_potato_suit <- ecocrop_a_raster('potato',st_clim)
 
 ecocrop_a_raster <- function(crop,
                              st_clim_all = NULL,
