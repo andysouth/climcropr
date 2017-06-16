@@ -33,7 +33,7 @@ This is a data driven document with hidden code that generates the figures.
 
 To create an ecocrop maximum suitability map for a crop you can use the `ecocrop_a_raster` function.
 
-This accepts a raster stacks of climate data for monthly inputs.
+This accepts raster stacks of climate data for monthly inputs.
 
 Currently the options are :
 
@@ -145,6 +145,29 @@ ec_out_beet_max <- ecocrop_a_raster('sugar beet',
                                       rainfed = TRUE, 
                                       filename = "inst\\extdata\\ec_out_beet_max",
                                       overwrite = TRUE )
+
+ec_out_maize <- ecocrop_a_raster('maize', 
+                                   st_clim_all = st_clim, 
+                                   rainfed = TRUE, 
+                                   filename = "inst\\extdata\\ec_out_maize",
+                                   overwrite = TRUE )
+
+ec_out_barley <- ecocrop_a_raster('barley', 
+                                   st_clim_all = st_clim, 
+                                   rainfed = TRUE, 
+                                   filename = "inst\\extdata\\ec_out_barley",
+                                   overwrite = TRUE )
+#irrigated
+ec_out_potato_irig <- ecocrop_a_raster('potato',
+                                   st_clim_all = st_clim,
+                                   rainfed = FALSE,
+                                   filename = "inst\\extdata\\ec_out_potato_irig",
+                                   overwrite = TRUE )
+ec_out_maize_irig <- ecocrop_a_raster('maize',
+                                   st_clim_all = st_clim,
+                                   rainfed = FALSE,
+                                   filename = "inst\\extdata\\ec_out_maize_irig",
+                                   overwrite = TRUE )
 
 ```
 
