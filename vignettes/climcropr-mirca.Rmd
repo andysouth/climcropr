@@ -1,0 +1,69 @@
+---
+title: "climcropr compare with MIRCA"
+author: "Andy South"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+#        fig_caption: yes
+# output: pdf_document        
+vignette: >
+  %\VignetteIndexEntry{climcropr intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=7)
+
+# library(tidyverse)
+# library(forcats)
+# library(sp) #for maps
+# library(tmap) #for maps
+# library(knitr) #for tables with kable
+library(raster)
+library(rnaturalearth) #for maps
+library(dismo) #for ecocrop
+
+# extent object for use in plots
+ext <- extent(-180,180,-60,80)
+
+```
+
+# Comparing ecocrop predictions with MIRCA crop maps at 0.5 degree resolution
+
+This is a data driven document with hidden code that generates the figures. 
+
+
+
+```{r, eval=TRUE, echo=TRUE}
+
+# call function using example climate data in the package
+data("st_clim")
+
+# ecocrop predictions using example climate data
+#rst_pot_eco_rain <- ecocrop_a_raster('potato',st_clim)
+#rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
+
+# can use existing saved maps in package
+
+# this didn't work 
+# no non-missing arguments to min;
+# Attempting to write a file to a path that does not exist:  inst/extdata
+ec_out_potato_irig <- ecocrop_a_raster('potato', 
+                                   st_clim_all = st_clim, 
+                                   rainfed = FALSE, 
+                                   filename = "inst\\extdata\\ec_out_potato_irig",
+                                   overwrite = TRUE )
+
+# MIRCA maps at same resolution
+rst_pot_eco_rain <- ecocrop_a_raster('potato',st_clim)
+rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
+
+```
+
+
+
+```{r, eval=TRUE, echo=FALSE, warnings=FALSE, message=FALSE, include=FALSE}
+
+
+```
