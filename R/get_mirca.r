@@ -1,34 +1,84 @@
+#' get_mirca
+#'
+#' get a mirca layer
+#'
+#' data from
+#' ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/
+#'
+#'
+#' @param cropname a Mirca cropname
+#' @param rainfed default=TRUE, FALSE for irrigated
+#' @param plot whether to plot the raster
+#'
+#' @export
+#'
+# @importFrom dismo ecocrop, getCrop, ECOcrops
+#' @import dismo raster readr R.utils
+#'
+#' @examples
 
 
-library(raster)
+get_mirca <- function(cropname,
+                      rainfed = TRUE,
+                      plot = TRUE) {
 
-zip_file <- "C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
-file_name <- "annual_area_harvested_rfc_crop10_ha_30mn"
-destdir <- tempdir()
+#todo move this somewhere else
+df_crop <- read_csv("code,name
+1, Wheat
+2, Maize
+3, Rice
+4, Barley
+5, Rye
+6, Millet
+7, Sorghum
+8, Soybeans
+9, Sunflower
+10, Potatoes
+11, Cassava
+12, Sugar cane
+13, Sugar beets
+14, Oil palm
+15, Rape seed
+16, Groundnuts
+17, Pulses
+18, Citrus
+19, Date palm
+20, Grapes
+21, Cotton
+22, Cocoa
+23, Coffee
+24, Others perennial
+25, Fodder grasses
+26, Others")
 
-utils::unzip(zip_file, exdir=destdir)
 
-rst <- raster::raster(file.path(destdir, file_name, paste0(file_name, '.asc')))
+cropcode <- df_crop$code[toupper(cropname) == toupper(df_crop$name)]
 
-## this worked, beware default behaviour of gunzip is to remove file so it doesn't work a 2nd time
-#zip_file <- "C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
-zip_file <- "C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\annual_area_harvested_rfc_crop01_ha_30mn.asc.gz"
-library(R.utils)
-rst <- raster(R.utils::gunzip(zip_file, remove=FALSE))
+raincode <- ifelse(rainfed,'rfc','irc')
 
-plot(rst)
+file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc.gz")
+file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
+
+#TODO change this to the thing that will work from the package
+folder <- "inst\\extdata"
+
+## beware default behaviour of gunzip is to remove file so it doesn't work a 2nd time
+
+#file_path <- file.path(folder, file_name)
+
+file_path <- system.file("extdata/mirca", file_name, package = "climcropr")
+#file.exists(system.file("extdata/mirca", file_name, package = "climcropr"))
+#[1] TRUE
+
+rst <- raster(R.utils::gunzip(file_path, remove=FALSE))
+
+if (plot) plot(rst)
 
 #will it work directly from the ftp ? not yet ...
-ftpfolder <- "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
-file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
-zip_file <- paste0(ftpfolder,file_name)
+# ftpfolder <- "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
+# file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
+# zip_file <- paste0(ftpfolder,file_name)
 
-area(rst)
-# class       : RasterLayer
-# dimensions  : 360, 720, 259200  (nrow, ncol, ncell)
-# resolution  : 0.5, 0.5  (x, y)
-# extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
-# coord. ref. : NA
-# data source : in memory
-# names       : layer
-# values      : 13.4722, 3077.24  (min, max)
+invisible(rst)
+
+}

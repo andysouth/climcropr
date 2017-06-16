@@ -146,6 +146,29 @@ ec_out_beet_max <- ecocrop_a_raster('sugar beet',
                                       filename = "inst\\extdata\\ec_out_beet_max",
                                       overwrite = TRUE )
 
+ec_out_maize <- ecocrop_a_raster('maize', 
+                                   st_clim_all = st_clim, 
+                                   rainfed = TRUE, 
+                                   filename = "inst\\extdata\\ec_out_maize",
+                                   overwrite = TRUE )
+
+ec_out_barley <- ecocrop_a_raster('barley', 
+                                   st_clim_all = st_clim, 
+                                   rainfed = TRUE, 
+                                   filename = "inst\\extdata\\ec_out_barley",
+                                   overwrite = TRUE )
+#irrigated
+ec_out_potato_irig <- ecocrop_a_raster('potato',
+                                   st_clim_all = st_clim,
+                                   rainfed = FALSE,
+                                   filename = "inst\\extdata\\ec_out_potato_irig",
+                                   overwrite = TRUE )
+ec_out_maize_irig <- ecocrop_a_raster('maize',
+                                   st_clim_all = st_clim,
+                                   rainfed = FALSE,
+                                   filename = "inst\\extdata\\ec_out_maize_irig",
+                                   overwrite = TRUE )
+
 ```
 
 # Initial experimenting with outputs

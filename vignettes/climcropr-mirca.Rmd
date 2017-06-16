@@ -46,12 +46,9 @@ data("st_clim")
 
 # can use existing saved maps in package
 
-# this didn't work 
-# no non-missing arguments to min;
-# Attempting to write a file to a path that does not exist:  inst/extdata
-ec_out_potato_irig <- ecocrop_a_raster('potato', 
-                                   st_clim_all = st_clim, 
-                                   rainfed = FALSE, 
+ec_out_potato_irig <- ecocrop_a_raster('potato',
+                                   st_clim_all = st_clim,
+                                   rainfed = FALSE,
                                    filename = "inst\\extdata\\ec_out_potato_irig",
                                    overwrite = TRUE )
 
@@ -59,11 +56,27 @@ ec_out_potato_irig <- ecocrop_a_raster('potato',
 rst_pot_eco_rain <- ecocrop_a_raster('potato',st_clim)
 rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
 
+
+
+
 ```
 
 
 
 ```{r, eval=TRUE, echo=FALSE, warnings=FALSE, message=FALSE, include=FALSE}
+
+#takes ~30secs, but not useful, it has one polygon per cell
+#spdf_pot_mir_rain <- rasterToPolygons(rst_pot_mir_rain)
+
+#levelplot from rsaterVis adds nice lat long histograms when applied to a single layer 
+#library(rasterVis)
+#levelplot(rst_pot_mir_rain)
+# seems like there are lots of zeroes in this mirca data 
+# can I replace 0 with NA ?
+rst <- rst_pot_mir_rain
+rst[rst==0] <- NA
+
+plot(rst)
 
 
 ```
