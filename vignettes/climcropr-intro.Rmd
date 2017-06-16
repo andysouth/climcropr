@@ -33,7 +33,7 @@ This is a data driven document with hidden code that generates the figures.
 
 To create an ecocrop maximum suitability map for a crop you can use the `ecocrop_a_raster` function.
 
-This accepts a raster stacks of climate data for monthly inputs.
+This accepts raster stacks of climate data for monthly inputs.
 
 Currently the options are :
 
