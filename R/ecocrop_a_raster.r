@@ -68,7 +68,7 @@ ecocrop_a_raster <- function(crop,
   for (r in 1:nrow(outraster)){
 
     # andy added
-    message('row',r,' of ',nrow(outraster))
+    if (r%%10 == 1) message('row',r,' of ',nrow(outraster))
 
     #a to receive results
     v[] <- NA
@@ -78,7 +78,7 @@ ecocrop_a_raster <- function(crop,
 
     if (rainfed) { prec <- getValues(st_prec, r)}
 
-    # going through all NA cells (allows masking)
+    # going through all non NA cells (allows masking)
     nac <- which(!is.na(tmin[, 1]))
 
     for (i in nac) {
@@ -98,15 +98,18 @@ ecocrop_a_raster <- function(crop,
                      prec = clm[, 3],
                      rain = rainfed)
         #v[i] <- e@maxper[1]
-        # outputting max suitability
+        # outputting max suitability, which is suit in the best month
         v[i] <- e@maxsuit[1]
+        #TODO can I get it to output possible too ?
+        #e@suitability gives suit for each of 12 months
       }
     }
 
     outraster[r, ] <- v
     #outr <- writeRaster(outr, filename, ...)
   }
-  #andy tried moving this  outside of the rows loop of the input raster
+
+  #andy move this  outside of the rows loop of the input raster
   if (!is.null(filename)) {
     filename  <- raster::trim(filename)
     outraster <- writeRaster(outraster, filename, ...)
