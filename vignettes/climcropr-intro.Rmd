@@ -116,7 +116,7 @@ ec_out_sorghum_max <- ecocrop_a_raster('Sorghum (high altitude)',
 ec_out_potato <- ecocrop_a_raster('potato', 
                                    st_clim_all = st_clim, 
                                    rainfed = TRUE, 
-                                   filename = "inst\\extdata\\ec_out_potato",
+                                   filename = "inst\\extdata\\ec_out_potato_rain",
                                    overwrite = TRUE )
 
 #potato using tmax

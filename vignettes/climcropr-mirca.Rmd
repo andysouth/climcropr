@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=7)
 # library(sp) #for maps
 # library(tmap) #for maps
 # library(knitr) #for tables with kable
+library(climcropr)
 library(raster)
 library(rnaturalearth) #for maps
 library(dismo) #for ecocrop
@@ -35,7 +36,7 @@ This is a data driven document with hidden code that generates the figures.
 
 
 
-```{r, eval=TRUE, echo=TRUE}
+```{r, eval=TRUE, echo=FALSE}
 
 # call function using example climate data in the package
 data("st_clim")
@@ -46,15 +47,12 @@ data("st_clim")
 
 # can use existing saved maps in package
 
-ec_out_potato_irig <- ecocrop_a_raster('potato',
-                                   st_clim_all = st_clim,
-                                   rainfed = FALSE,
-                                   filename = "inst\\extdata\\ec_out_potato_irig",
-                                   overwrite = TRUE )
+ec_out_potato_rain <- raster(system.file("extdata/", "ec_out_potato_rain.grd", package = "climcropr"))
+
 
 # MIRCA maps at same resolution
-rst_pot_eco_rain <- ecocrop_a_raster('potato',st_clim)
-rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
+rst_pot_mir_rain <- get_mirca("Potatoes", plot=FALSE)
+#rst_pot_eco_irig
 
 
 
@@ -63,7 +61,7 @@ rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
 
 
 
-```{r, eval=TRUE, echo=FALSE, warnings=FALSE, message=FALSE, include=FALSE}
+```{r, eval=TRUE, echo=FALSE, warnings=FALSE, message=FALSE}
 
 #takes ~30secs, but not useful, it has one polygon per cell
 #spdf_pot_mir_rain <- rasterToPolygons(rst_pot_mir_rain)
@@ -76,7 +74,23 @@ rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
 rst <- rst_pot_mir_rain
 rst[rst==0] <- NA
 
-plot(rst)
+bbox <- raster::extent(-180,180,-40,75)
+
+par(mar=c(0,0,2,0)) #bltr
+plot(rst, main="potato mirca", ext=bbox)
+plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+
+par(mar=c(0,0,2,0)) #bltr
+plot(ec_out_potato_rain, main="potato ecococrop", ext=bbox) 
+plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+
+```
+
+
+```{r, eval=TRUE, echo=FALSE, warnings=FALSE, message=FALSE, include=FALSE}
+# can I write something to systematically go through the plots
+# comparing ecocrop to Mirca for ~5 crops
 
 
 ```
+
