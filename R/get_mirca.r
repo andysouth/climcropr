@@ -56,21 +56,29 @@ cropcode <- df_crop$code[toupper(cropname) == toupper(df_crop$name)]
 
 raincode <- ifelse(rainfed,'rfc','irc')
 
-file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc.gz")
-file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
+#first without the gz
+file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc")
+#file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc"
 
-#TODO change this to the thing that will work from the package
-folder <- "inst\\extdata"
+
+folder <- "extdata/mirca"
 
 ## beware default behaviour of gunzip is to remove file so it doesn't work a 2nd time
+# and  if the file has already been unzipped it fails
 
-#file_path <- file.path(folder, file_name)
+# still deciding best way to do this, could have the files unzipped already
 
-file_path <- system.file("extdata/mirca", file_name, package = "climcropr")
-#file.exists(system.file("extdata/mirca", file_name, package = "climcropr"))
-#[1] TRUE
+file_path <- system.file(folder, file_name, package = "climcropr")
 
-rst <- raster(R.utils::gunzip(file_path, remove=FALSE))
+# if the asc file doesn't exist try adding the gz extension and unzipping
+if (! file.exists(file_path))
+{
+  rst <- raster(R.utils::gunzip(paste0(file_path,".gz"), remove=FALSE))
+} else
+{
+  rst <- raster(file_path)
+}
+
 
 if (plot) plot(rst)
 
