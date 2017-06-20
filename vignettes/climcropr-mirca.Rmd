@@ -2,9 +2,9 @@
 title: "climcropr compare with MIRCA"
 author: "Andy South"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+#output: rmarkdown::html_vignette
 #        fig_caption: yes
-# output: pdf_document        
+output: pdf_document        
 vignette: >
   %\VignetteIndexEntry{climcropr intro}
   %\VignetteEngine{knitr::rmarkdown}
@@ -31,31 +31,11 @@ ext <- extent(-180,180,-60,80)
 
 ```
 
-# Comparing ecocrop predictions with MIRCA crop maps at 0.5 degree resolution
+### Comparing ecocrop predictions with MIRCA crop maps at 0.5 degree resolution
+
 
 This is a data driven document with hidden code that generates the figures. 
 
-
-
-```{r, eval=TRUE, echo=FALSE}
-
-# call function using example climate data in the package
-data("st_clim")
-
-# ecocrop predictions using example climate data
-#rst_pot_eco_rain <- ecocrop_a_raster('potato',st_clim)
-#rst_pot_eco_irig <- ecocrop_a_raster('potato',st_clim, rainfed=FALSE)
-
-# can use existing saved maps in package
-
-ec_out_potato_rain <- raster(system.file("extdata/", "ec_out_potato_rain.grd", package = "climcropr"))
-
-
-# MIRCA maps at same resolution
-rst_pot_mir_rain <- get_mirca("Potatoes", plot=FALSE)
-#rst_pot_eco_irig
-
-```
 
 ```{r, eval=TRUE, echo=FALSE}
 
@@ -91,8 +71,12 @@ for( crop_num in 1:length(df_crops))
     name_out_eco <- paste0("ec_out_",name_eco,"_", name_rain,".grd" )
     
     #temporary have to do this way to be able to save the file to the package
-    file_path <- system.file("extdata/", name_out_eco, package = "climcropr")
     #file_path <- file.path("inst\\extdata", name_out_eco)
+    
+    #this is the way it should run from the package
+    file_path <- system.file("extdata/", name_out_eco, package = "climcropr")
+
+    rainfed <- ifelse(name_rain=="rain",TRUE,FALSE)
         
     # checking if outfile exists already
     if (! file.exists(file_path))
@@ -102,7 +86,7 @@ for( crop_num in 1:length(df_crops))
       #if it doesn't exist, run ecocrop
       rst_eco <- ecocrop_a_raster( name_eco,
                                    st_clim_all = st_clim,
-                                   rainfed = (name_rain=="rain"),
+                                   rainfed = rainfed,
                                    filename = stringr::str_sub(file_path,1,-5), #remove .grd
                                    overwrite = TRUE)
     } else
@@ -111,19 +95,27 @@ for( crop_num in 1:length(df_crops))
       rst_eco <- raster(file_path)
     }
     
-    # load MIRCA file 
-    rst_mir <- get_mirca(name_mir, rainfed = (name_rain=="rain"))
+    # allowing mirca to be switched on & off
+    mirca <- TRUE
     
-    # plot ecocrop & mirca maps one after other
-    # ecocrop
-    par(mar=c(0,0,2,0)) #bltr
-    plot(rst_eco, main=paste0(name_eco," ecocrop prediction, ",name_rain), ext=ext)
-    plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
-
-    # mirca
-    par(mar=c(0,0,2,0)) #bltr
-    plot(rst, main=paste0(name_mir," Mirca annual harvested area, ",name_rain), ext=ext)
-    plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+    if (mirca)
+    {
+      # load MIRCA file 
+      rst_mir <- get_mirca(name_mir, rainfed = rainfed, plot=FALSE)
+      # replace 0 with NA
+      rst_mir[rst_mir==0] <- NA    
+      
+      # plot ecocrop & mirca maps one after other
+      # ecocrop
+      par(mar=c(0,0,2,0)) #bltr
+      plot(rst_eco, main=paste0(name_eco," ecocrop prediction, ",name_rain), ext=ext)
+      plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+  
+      # mirca
+      par(mar=c(0,0,2,0)) #bltr
+      plot(rst_mir, main=paste0(name_mir," Mirca annual harvested area, ",name_rain), ext=ext)
+      plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+    }
         
   } #end rain
 } #end crop
@@ -157,10 +149,4 @@ plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
 ```
 
 
-```{r, eval=TRUE, echo=FALSE, warnings=FALSE, message=FALSE, include=FALSE}
-# can I write something to systematically go through the plots
-# comparing ecocrop to Mirca for ~5 crops
-
-
-```
 

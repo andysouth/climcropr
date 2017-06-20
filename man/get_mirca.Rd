@@ -20,3 +20,7 @@ get a mirca layer
 data from
 ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/
 }
+\examples{
+rst_mir <- get_mirca(name_mir, rainfed = TRUE)
+raster::plot(rst_mir)
+}
