@@ -16,7 +16,8 @@
 #' @import dismo raster readr R.utils
 #'
 #' @examples
-
+#' rst_mir <- get_mirca(name_mir, rainfed = TRUE)
+#' raster::plot(rst_mir)
 
 get_mirca <- function(cropname,
                       rainfed = TRUE,
@@ -24,15 +25,15 @@ get_mirca <- function(cropname,
 
 #todo move this somewhere else
 df_crop <- read_csv("code,name
-1, Wheat
-2, Maize
-3, Rice
-4, Barley
-5, Rye
-6, Millet
-7, Sorghum
-8, Soybeans
-9, Sunflower
+01, Wheat
+02, Maize
+03, Rice
+04, Barley
+05, Rye
+06, Millet
+07, Sorghum
+08, Soybeans
+09, Sunflower
 10, Potatoes
 11, Cassava
 12, Sugar cane
@@ -54,30 +55,40 @@ df_crop <- read_csv("code,name
 
 cropcode <- df_crop$code[toupper(cropname) == toupper(df_crop$name)]
 
+if (!(cropcode %in% c('01','02','07','10')))
+{
+  warning("temporarily Mirca data only downloaded for wheat, maize, sorghum and potatoes")
+  return(FALSE)
+}
+
 raincode <- ifelse(rainfed,'rfc','irc')
 
-#first without the gz
-file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc")
-#file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc"
+#first without the gz BUT then failed if unzipped file did not exist
+#file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc")
+file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc.gz")
+#file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
+
+#annual_area_harvested_rfc_crop07_ha_30mn.asc.gz
 
 
 folder <- "extdata/mirca"
 
 ## beware default behaviour of gunzip is to remove file so it doesn't work a 2nd time
 # and  if the file has already been unzipped it fails
-
-# still deciding best way to do this, could have the files unzipped already
+# so initially just unzip to temporary file and don't delete the gz
 
 file_path <- system.file(folder, file_name, package = "climcropr")
 
+rst <- raster(R.utils::gunzip(file_path, temporary=TRUE, remove=FALSE))
+
 # if the asc file doesn't exist try adding the gz extension and unzipping
-if (! file.exists(file_path))
-{
-  rst <- raster(R.utils::gunzip(paste0(file_path,".gz"), remove=FALSE))
-} else
-{
-  rst <- raster(file_path)
-}
+# if (! file.exists(file_path))
+# {
+#   rst <- raster(R.utils::gunzip(paste0(file_path,".gz"), temporary=TRUE, remove=FALSE))
+# } else
+# {
+#   rst <- raster(file_path)
+# }
 
 
 if (plot) plot(rst)
