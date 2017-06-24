@@ -23,3 +23,14 @@ test_that("get_mirca downloads an irrigated crop when specificed", {
                "annual_area_harvested_irc_crop10_ha_30mn.asc.gz")
 })
 
+# test that get_mirca handles improperly entered crop names --------------------
+
+test_that("test that get_mirca handles improperly entered crop names", {
+  skip_on_cran()
+  expect_error(get_mirca("potato", rainfed = TRUE, cache = FALSE))
+})
+
+test_that("test that get_mirca handles no crop names", {
+  skip_on_cran()
+  expect_error(get_mirca(rainfed = TRUE, cache = FALSE))
+})
