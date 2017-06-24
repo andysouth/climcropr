@@ -1,3 +1,4 @@
+
 #' @title Get a MIRCA2000 layer
 #'
 #' @description Download MIRCA2000 global data of monthly irrigated and rainfed
@@ -44,6 +45,7 @@
 #' Physical Geography, University of Frankfurt, Frankfurt am Main, Germany.
 #'
 #'@seealso \code{\link{manage_cached_files}}
+#'@importFrom raster plot
 #'
 #' @note
 #' The data used in this package are downloaded from:
@@ -56,7 +58,6 @@ get_mirca <- function(cropname,
                       rainfed = TRUE,
                       plot = TRUE,
                       cache = TRUE) {
-
   cropcode <-
     df_crop$code[toupper(cropname) == toupper(df_crop$name)]
 
@@ -121,7 +122,7 @@ get_mirca <- function(cropname,
 
   # plot the resulting object
   if (plot == TRUE) {
-    raster::plot(rst, main = paste0("MIRCA2000 ", cropname))
+    plot(rst, main = paste0("MIRCA2000 ", cropname))
   }
 
   invisible(rst)
