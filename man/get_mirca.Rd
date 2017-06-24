@@ -8,7 +8,7 @@ get_mirca(cropname, rainfed = TRUE, plot = TRUE, cache = TRUE)
 }
 \arguments{
 \item{cropname}{a MIRCA2000 crop name, see \code{\link{df_crop}} for a full
-list}
+list. Fuzzy string matching via \code{base::agrep} is done.}
 
 \item{rainfed}{default=TRUE, FALSE for irrigated}
 
@@ -24,7 +24,9 @@ use with \code{climcropr}.
 }
 \description{
 Download MIRCA2000 global data of monthly irrigated and rainfed
-crop areas around the year 2000 (MIRCA2000)
+crop areas around the year 2000 (MIRCA2000). See
+\url{https://www.uni-frankfurt.de/45218023/MIRCA} for more detailed
+information on these data.
 }
 \note{
 The data used in this package are downloaded from:

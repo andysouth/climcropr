@@ -1,11 +1,15 @@
 
+
+
 #' @title Get a MIRCA2000 layer
 #'
 #' @description Download MIRCA2000 global data of monthly irrigated and rainfed
-#' crop areas around the year 2000 (MIRCA2000)
+#' crop areas around the year 2000 (MIRCA2000). See
+#' \url{https://www.uni-frankfurt.de/45218023/MIRCA} for more detailed
+#' information on these data.
 #'
 #' @param cropname a MIRCA2000 crop name, see \code{\link{df_crop}} for a full
-#' list
+#' list. Fuzzy string matching via \code{base::agrep} is done.
 #' @param rainfed default=TRUE, FALSE for irrigated
 #' @param plot default=TRUE, plot the resulting raster
 #' @param cache default=FALSE, TRUE to save MIRCA2000 files locally for future
@@ -58,8 +62,42 @@ get_mirca <- function(cropname,
                       rainfed = TRUE,
                       plot = TRUE,
                       cache = TRUE) {
-  cropcode <-
-    df_crop$code[toupper(cropname) == toupper(df_crop$name)]
+  if (missing(cropname)) {
+    stop(
+      "You have not provided a valid cropname from the MIRCA2000
+      database to download. Please use 'climcropr::df_crop' to see a list."
+    )
+  }
+
+  stopifnot(is.character(cropname),
+            length(cropname) == 1)
+
+  # If there's an exact match, use it; else, attempt partial match,
+  # from bomrang, written by @hughparsonage GitHub
+
+  if (toupper(cropname) %in% toupper(df_crop[["name"]])) {
+    cropcode <-
+      df_crop$code[toupper(cropname) == toupper(df_crop$name)]
+
+  } else {
+    likely_crops <- agrep(pattern = cropname,
+                          x = df_crop[["name"]],
+                          value = TRUE)
+
+    if (length(likely_crops) == 0) {
+      stop("No crops found, please see the 'df_crop' data frame for a list.")
+    }
+
+    if (length(likely_crops) > 0) {
+      stop(
+        "'",
+        cropname,
+        "' was not found in the MIRCA2000 database, did you mean '",
+        likely_crops,
+        "'?"
+      )
+    }
+  }
 
   raincode <- ifelse(rainfed, "rfc", "irc")
 
