@@ -62,6 +62,10 @@ get_mirca <- function(cropname,
                       rainfed = TRUE,
                       plot = TRUE,
                       cache = TRUE) {
+
+  utils::data("df_crop", package = "climcropr", envir = environment())
+  df_crop <- get("df_crop", envir = environment())
+
   if (missing(cropname)) {
     stop(
       "You have not provided a valid cropname from the MIRCA2000
