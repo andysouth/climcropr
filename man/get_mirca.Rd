@@ -64,5 +64,5 @@ crop areas on a 5 arc-minute grid. Frankfurt Hydrology Paper 09, Institute of
 Physical Geography, University of Frankfurt, Frankfurt am Main, Germany.
 }
 \seealso{
-\code{\link{manage_cached_files}}
+\code{\link{manage_climcropr_cache}}
 }

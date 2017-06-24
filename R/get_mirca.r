@@ -48,7 +48,7 @@
 #' crop areas on a 5 arc-minute grid. Frankfurt Hydrology Paper 09, Institute of
 #' Physical Geography, University of Frankfurt, Frankfurt am Main, Germany.
 #'
-#'@seealso \code{\link{manage_cached_files}}
+#'@seealso \code{\link{manage_climcropr_cache}}
 #'@importFrom raster plot
 #'
 #' @note
@@ -138,7 +138,7 @@ get_mirca <- function(cropname,
     dl_file <- paste0(MIRCA_ftp, dl_file)
 
     tryCatch(
-      download.file(
+      utils::download.file(
         url = unlist(dl_file),
         destfile = file.path(cache_dir, file_name),
         mode = "wb"
