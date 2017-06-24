@@ -61,3 +61,6 @@ Portmann, F.T. (2011): Global estimation of monthly irrigated and rainfed
 crop areas on a 5 arc-minute grid. Frankfurt Hydrology Paper 09, Institute of
 Physical Geography, University of Frankfurt, Frankfurt am Main, Germany.
 }
+\seealso{
+\code{\link{manage_cached_files}}
+}
