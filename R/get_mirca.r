@@ -1,103 +1,172 @@
-#' get_mirca
+
+
+
+#' @title Get a MIRCA2000 layer
 #'
-#' get a mirca layer
+#' @description Download MIRCA2000 global data of monthly irrigated and rainfed
+#' crop areas around the year 2000 (MIRCA2000). See
+#' \url{https://www.uni-frankfurt.de/45218023/MIRCA} for more detailed
+#' information on these data.
 #'
-#' data from
-#' ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/
-#'
-#'
-#' @param cropname a Mirca cropname
+#' @param cropname a MIRCA2000 crop name, see \code{\link{df_crop}} for a full
+#' list. Fuzzy string matching via \code{base::agrep} is done.
 #' @param rainfed default=TRUE, FALSE for irrigated
-#' @param plot whether to plot the raster
+#' @param plot default=TRUE, plot the resulting raster
+#' @param cache default=FALSE, TRUE to save MIRCA2000 files locally for future
+#' use with \code{climcropr}
+#'
+#' @return A \code{\link[raster]{raster}} object of MIRCA2000 crop data and
+#' optionally a gzipped file of the original data saved to local disk for future
+#' use with \code{climcropr}.
+#'
+#' @examples
+#' rst_mir <- get_mirca("potatoes", rainfed = TRUE)
+#'
+#' @references
+#' The documentation for irrigated crops was published as Frankfurt Hydrology
+#' Paper 06:
+#'
+#' Portmann, F., Siebert, S., Bauer, C. & Döll, P. (2008): Global data set of
+#' monthly growing areas of 26 irrigated crops. Frankfurt Hydrology Paper 06,
+#' Institute of Physical Geography, University of Frankfurt, Frankfurt am Main,
+#' Germany.
+#'
+#' The documentation for both rainfed and irrigated crops is published in a
+#' peer-reviewed journal:
+#'
+#' Portmann, F. T., Siebert, S. & Döll, P. (2010): MIRCA2000 – Global monthly
+#' irrigated and rainfed crop areas around the year 2000: A new high-resolution
+#' data set for agricultural and hydrological modeling, Global Biogeochemical
+#' Cycles, 24, GB 1011, doi:10.1029/2008GB003435.
+#'
+#' For Frankfurt Hydrology Paper 09, the documentation for irrigated crops was
+#' updated especially with respect to data quality and scaling. Data quality
+#' parameters by country and unit, and crop calendars for rainfed and irrigated
+#' crops for each unit are now available, too:
+#'
+#' Portmann, F.T. (2011): Global estimation of monthly irrigated and rainfed
+#' crop areas on a 5 arc-minute grid. Frankfurt Hydrology Paper 09, Institute of
+#' Physical Geography, University of Frankfurt, Frankfurt am Main, Germany.
+#'
+#'@seealso \code{\link{manage_climcropr_cache}}
+#'@importFrom raster plot
+#'
+#' @note
+#' The data used in this package are downloaded from:
+#'
+#' \url{ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/}
 #'
 #' @export
 #'
-# @importFrom dismo ecocrop, getCrop, ECOcrops
-#' @import dismo raster readr R.utils
-#'
-#' @examples
-#' rst_mir <- get_mirca(name_mir, rainfed = TRUE)
-#' raster::plot(rst_mir)
-
 get_mirca <- function(cropname,
                       rainfed = TRUE,
-                      plot = TRUE) {
+                      plot = TRUE,
+                      cache = TRUE) {
 
-#todo move this somewhere else
-df_crop <- read_csv("code,name
-01, Wheat
-02, Maize
-03, Rice
-04, Barley
-05, Rye
-06, Millet
-07, Sorghum
-08, Soybeans
-09, Sunflower
-10, Potatoes
-11, Cassava
-12, Sugar cane
-13, Sugar beets
-14, Oil palm
-15, Rape seed
-16, Groundnuts
-17, Pulses
-18, Citrus
-19, Date palm
-20, Grapes
-21, Cotton
-22, Cocoa
-23, Coffee
-24, Others perennial
-25, Fodder grasses
-26, Others")
+  utils::data("df_crop", package = "climcropr", envir = environment())
+  df_crop <- get("df_crop", envir = environment())
 
+  if (missing(cropname)) {
+    stop(
+      "You have not provided a valid cropname from the MIRCA2000
+      database to download. Please use 'climcropr::df_crop' to see a list."
+    )
+  }
 
-cropcode <- df_crop$code[toupper(cropname) == toupper(df_crop$name)]
+  stopifnot(is.character(cropname),
+            length(cropname) == 1)
 
-if (!(cropcode %in% c('01','02','07','10')))
-{
-  warning("temporarily Mirca data only downloaded for wheat, maize, sorghum and potatoes")
-  return(FALSE)
-}
+  # If there's an exact match, use it; else, attempt partial match,
+  # from bomrang, written by @hughparsonage GitHub
 
-raincode <- ifelse(rainfed,'rfc','irc')
+  if (toupper(cropname) %in% toupper(df_crop[["name"]])) {
+    cropcode <-
+      df_crop$code[toupper(cropname) == toupper(df_crop$name)]
 
-#first without the gz BUT then failed if unzipped file did not exist
-#file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc")
-file_name <- paste0("annual_area_harvested_",raincode,"_crop",cropcode,"_ha_30mn.asc.gz")
-#file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
+  } else {
+    likely_crops <- agrep(pattern = cropname,
+                          x = df_crop[["name"]],
+                          value = TRUE)
 
-#annual_area_harvested_rfc_crop07_ha_30mn.asc.gz
+    if (length(likely_crops) == 0) {
+      stop("No crops found, please see the 'df_crop' data frame for a list.")
+    }
 
+    if (length(likely_crops) > 0) {
+      stop(
+        "'",
+        cropname,
+        "' was not found in the MIRCA2000 database, did you mean '",
+        likely_crops,
+        "'?"
+      )
+    }
+  }
 
-folder <- "extdata/mirca"
+  raincode <- ifelse(rainfed, "rfc", "irc")
 
-## beware default behaviour of gunzip is to remove file so it doesn't work a 2nd time
-# and  if the file has already been unzipped it fails
-# so initially just unzip to temporary file and don't delete the gz
+  file_name <-
+    paste0("annual_area_harvested_",
+           raincode,
+           "_crop",
+           cropcode,
+           "_ha_30mn.asc.gz")
 
-file_path <- system.file(folder, file_name, package = "climcropr")
+  # check files that may exist locally in the cache_dir before downloading -----
 
-rst <- raster(R.utils::gunzip(file_path, temporary=TRUE, remove=FALSE))
+  if (isTRUE(cache)) {
+    cache_dir <- rappdirs::user_config_dir("climcropr")
+    if (!file.exists(cache_dir)) {
+      dir.create(cache_dir)
+    }
+  } else {
+    cache_dir <- tempdir()
+  }
 
-# if the asc file doesn't exist try adding the gz extension and unzipping
-# if (! file.exists(file_path))
-# {
-#   rst <- raster(R.utils::gunzip(paste0(file_path,".gz"), temporary=TRUE, remove=FALSE))
-# } else
-# {
-#   rst <- raster(file_path)
-# }
+  # filter downloaded ----------------------------------------------------------
 
+  # which files are locally available?
+  cache_dir_contents <-
+    list.files(cache_dir, pattern = "asc.gz$")
 
-if (plot) plot(rst)
+  # which files requested need to be downloaded?
+  dl_file <- file_name[!(file_name %in% cache_dir_contents)]
 
-#will it work directly from the ftp ? not yet ...
-# ftpfolder <- "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
-# file_name <- "annual_area_harvested_rfc_crop10_ha_30mn.asc.gz"
-# zip_file <- paste0(ftpfolder,file_name)
+  # download files -------------------------------------------------------------
+  if (length(dl_file) > 0) {
+    message(" \nDownloading requested MIRCA file.\n ")
 
-invisible(rst)
+    MIRCA_ftp <-
+      "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
 
-}
+    dl_file <- paste0(MIRCA_ftp, dl_file)
+
+    tryCatch(
+      utils::download.file(
+        url = unlist(dl_file),
+        destfile = file.path(cache_dir, file_name),
+        mode = "wb"
+      ),
+      error = function(x) {
+        do.call(file.remove, list(list.files(cache_dir, full.names = TRUE)))
+        stop("\nThe file download has failed.\n
+             \nPlease start the download again.\n")
+      }
+    )
+  }
+
+  # add full file path to the file
+  MIRCA_file <- file.path(cache_dir, file_name)
+
+  # create a raster object of the file
+  rst <-
+    raster::raster(SDMTools::read.asc.gz(MIRCA_file))
+
+  # plot the resulting object
+  if (plot == TRUE) {
+    plot(rst, main = paste0("MIRCA2000 ", cropname))
+  }
+
+  invisible(rst)
+
+  }
