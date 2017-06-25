@@ -33,3 +33,14 @@ test_that("test that get_mirca handles no crop names", {
   skip_on_cran()
   expect_error(get_mirca(rainfed = TRUE, cache = FALSE))
 })
+
+# test that get_mirca creates a cache directory if none exists -----------------
+
+test_that("test that get_mirca creates a cache directory if none exists", {
+  skip_on_cran()
+  unlink(rappdirs::user_cache_dir("climcropr"), recursive = TRUE)
+  get_mirca("potatoes", rainfed = TRUE, cache = TRUE)
+  expect_true(file.exists(file.path(rappdirs::user_cache_dir("climcropr"))))
+  # cleanup
+  unlink(rappdirs::user_cache_dir("climcropr"), recursive = TRUE)
+})

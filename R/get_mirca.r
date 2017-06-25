@@ -1,6 +1,4 @@
 
-
-
 #' @title Get a MIRCA2000 layer
 #'
 #' @description Download MIRCA2000 global data of monthly irrigated and rainfed
@@ -115,7 +113,7 @@ get_mirca <- function(cropname,
   # check files that may exist locally in the cache_dir before downloading -----
 
   if (isTRUE(cache)) {
-    cache_dir <- rappdirs::user_config_dir("climcropr")
+    cache_dir <- rappdirs::user_cache_dir("climcropr")
     if (!file.exists(cache_dir)) {
       dir.create(cache_dir)
     }
