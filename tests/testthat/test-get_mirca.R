@@ -45,7 +45,9 @@ test_that("test that get_mirca creates a cache directory if none exists", {
   unlink(rappdirs::user_cache_dir("climcropr"), recursive = TRUE)
 })
 
-test_that("test that set_cache uses tempdir() if caching == FALSE", {
+# test that get_mirca does not create a cache directory if none is specified ---
+
+test_that("test that set_cache does not create cache dir if caching == FALSE", {
   get_mirca("potatoes", rainfed = TRUE, cache = FALSE)
   expect_true(!file.exists(file.path(rappdirs::user_cache_dir("climcropr"))))
 })
