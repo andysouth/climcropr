@@ -13,7 +13,6 @@ Imports:
   curl,
   dismo,
   SDMTools,
-  R.utils,
   rappdirs,
   raster,
   utils
