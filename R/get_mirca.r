@@ -132,13 +132,17 @@ get_mirca <- function(cropname,
   dl_file <- file_name[!(file_name %in% cache_dir_contents)]
 
   # download files -------------------------------------------------------------
-  if (length(dl_file) > 0) {
-    message(" \nDownloading requested MIRCA file for ", cropname, ".\n")
 
-    MIRCA_ftp <-
+  rain <- ifelse(rainfed == TRUE, "rainfed", "irrigated")
+
+  if (length(dl_file) > 0) {
+    message(" \nDownloading requested MIRCA2000 file for ", rain, " ",
+            tolower(cropname), ".\n")
+
+    mirca_ftp <-
       "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
 
-    dl_file <- paste0(MIRCA_ftp, dl_file)
+    dl_file <- paste0(mirca_ftp, dl_file)
 
     tryCatch(
       utils::download.file(
@@ -155,11 +159,11 @@ get_mirca <- function(cropname,
   }
 
   # add full file path to the file
-  MIRCA_file <- file.path(cache_dir, file_name)
+  mirca_file <- file.path(cache_dir, file_name)
 
   # create a raster object of the file
   rst <-
-    raster::raster(SDMTools::read.asc.gz(MIRCA_file))
+    raster::raster(SDMTools::read.asc.gz(mirca_file))
 
   # plot the resulting object
   if (plot == TRUE) {
