@@ -116,7 +116,9 @@ get_mirca <- function(cropname,
   if (isTRUE(cache)) {
     cache_dir <- rappdirs::user_cache_dir("climcropr")
     if (!dir.exists(cache_dir)) {
-      R.utils::mkdirs(cache_dir, recursive = TRUE)
+      dir.create(rappdirs::user_cache_dir(appname = "climcropr",
+                                          appauthor = "climcropr"),
+                 recursive = TRUE)
     }
   } else {
     cache_dir <- tempdir()
