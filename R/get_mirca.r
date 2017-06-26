@@ -66,8 +66,8 @@ get_mirca <- function(cropname,
 
   if (missing(cropname)) {
     stop(
-      "You have not provided a valid cropname from the MIRCA2000
-      database to download. Please use 'climcropr::df_crop' to see a list."
+      "\nYou have not provided a valid cropname from the MIRCA2000
+      database to download. Please use 'climcropr::df_crop' to see a list.\n"
     )
   }
 
@@ -87,16 +87,17 @@ get_mirca <- function(cropname,
                           value = TRUE)
 
     if (length(likely_crops) == 0) {
-      stop("No crops found, please see the 'df_crop' data frame for a list.")
+      stop("\nNo crops found, please see the 'climcropr::df_crop'",
+            "data frame for a list.\n")
     }
 
     if (length(likely_crops) > 0) {
       stop(
-        "'",
+        "\n'",
         cropname,
         "' was not found in the MIRCA2000 database, did you mean '",
         likely_crops,
-        "'?"
+        "'?\n"
       )
     }
   }
@@ -132,7 +133,7 @@ get_mirca <- function(cropname,
 
   # download files -------------------------------------------------------------
   if (length(dl_file) > 0) {
-    message(" \nDownloading requested MIRCA file.\n ")
+    message(" \nDownloading requested MIRCA file for ", cropname, ".\n")
 
     MIRCA_ftp <-
       "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
@@ -147,8 +148,8 @@ get_mirca <- function(cropname,
       ),
       error = function(x) {
         do.call(file.remove, list(list.files(cache_dir, full.names = TRUE)))
-        stop("\nThe file download has failed.\n
-             \nPlease start the download again.\n")
+        stop("\nThe file download has failed.\n",
+             "Please start the download again.\n")
       }
     )
   }
