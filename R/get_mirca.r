@@ -1,6 +1,4 @@
 
-
-
 #' @title Get a MIRCA2000 layer
 #'
 #' @description Download MIRCA2000 global data of monthly irrigated and rainfed
@@ -68,8 +66,8 @@ get_mirca <- function(cropname,
 
   if (missing(cropname)) {
     stop(
-      "You have not provided a valid cropname from the MIRCA2000
-      database to download. Please use 'climcropr::df_crop' to see a list."
+      "\nYou have not provided a valid cropname from the MIRCA2000
+      database to download. Please use 'climcropr::df_crop' to see a list.\n"
     )
   }
 
@@ -89,16 +87,17 @@ get_mirca <- function(cropname,
                           value = TRUE)
 
     if (length(likely_crops) == 0) {
-      stop("No crops found, please see the 'df_crop' data frame for a list.")
+      stop("\nNo crops found, please see the 'climcropr::df_crop'",
+            "data frame for a list.\n")
     }
 
     if (length(likely_crops) > 0) {
       stop(
-        "'",
+        "\n'",
         cropname,
         "' was not found in the MIRCA2000 database, did you mean '",
         likely_crops,
-        "'?"
+        "'?\n"
       )
     }
   }
@@ -115,9 +114,11 @@ get_mirca <- function(cropname,
   # check files that may exist locally in the cache_dir before downloading -----
 
   if (isTRUE(cache)) {
-    cache_dir <- rappdirs::user_config_dir("climcropr")
-    if (!file.exists(cache_dir)) {
-      dir.create(cache_dir)
+    cache_dir <- rappdirs::user_cache_dir("climcropr")
+    if (!dir.exists(cache_dir)) {
+      dir.create(rappdirs::user_cache_dir(appname = "climcropr",
+                                          appauthor = "climcropr"),
+                 recursive = TRUE)
     }
   } else {
     cache_dir <- tempdir()
@@ -133,13 +134,17 @@ get_mirca <- function(cropname,
   dl_file <- file_name[!(file_name %in% cache_dir_contents)]
 
   # download files -------------------------------------------------------------
-  if (length(dl_file) > 0) {
-    message(" \nDownloading requested MIRCA file.\n ")
 
-    MIRCA_ftp <-
+  rain <- ifelse(rainfed == TRUE, "rainfed", "irrigated")
+
+  if (length(dl_file) > 0) {
+    message(" \nDownloading requested MIRCA2000 file for ", rain, " ",
+            tolower(cropname), ".\n")
+
+    mirca_ftp <-
       "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
 
-    dl_file <- paste0(MIRCA_ftp, dl_file)
+    dl_file <- paste0(mirca_ftp, dl_file)
 
     tryCatch(
       utils::download.file(
@@ -149,18 +154,18 @@ get_mirca <- function(cropname,
       ),
       error = function(x) {
         do.call(file.remove, list(list.files(cache_dir, full.names = TRUE)))
-        stop("\nThe file download has failed.\n
-             \nPlease start the download again.\n")
+        stop("\nThe file download has failed.\n",
+             "Please start the download again.\n")
       }
     )
   }
 
   # add full file path to the file
-  MIRCA_file <- file.path(cache_dir, file_name)
+  mirca_file <- file.path(cache_dir, file_name)
 
   # create a raster object of the file
   rst <-
-    raster::raster(SDMTools::read.asc.gz(MIRCA_file))
+    raster::raster(SDMTools::read.asc.gz(mirca_file))
 
   # plot the resulting object
   if (plot == TRUE) {

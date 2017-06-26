@@ -58,7 +58,7 @@
 #' @export
 #' @rdname manage_climcropr_cache
 climcropr_cache_list <- function() {
-  cache_dir <- rappdirs::user_config_dir("climcropr")
+  cache_dir <- rappdirs::user_cache_dir("climcropr")
   list.files(cache_dir, ignore.case = TRUE, include.dirs = TRUE,
              recursive = TRUE, full.names = TRUE)
 }
@@ -66,7 +66,7 @@ climcropr_cache_list <- function() {
 #' @export
 #' @rdname manage_climcropr_cache
 climcropr_cache_delete <- function(files, force = TRUE) {
-  cache_dir <- rappdirs::user_config_dir("climcropr")
+  cache_dir <- rappdirs::user_cache_dir("climcropr")
   if (!all(file.exists(cache_dir, "/", files))) {
     stop("These files don't exist or can't be found: \n",
          strwrap(file.path(cache_dir, files)[!file.exists(
@@ -79,7 +79,7 @@ climcropr_cache_delete <- function(files, force = TRUE) {
 #' @export
 #' @rdname manage_climcropr_cache
 climcropr_cache_delete_all <- function(force = TRUE) {
-  cache_dir <- rappdirs::user_config_dir("climcropr")
+  cache_dir <- rappdirs::user_cache_dir("climcropr")
   files <- list.files(cache_dir, ignore.case = TRUE, include.dirs = TRUE,
                       full.names = TRUE, recursive = TRUE)
   unlink(files, force = force, recursive = TRUE)
@@ -88,7 +88,7 @@ climcropr_cache_delete_all <- function(force = TRUE) {
 #' @export
 #' @rdname manage_climcropr_cache
 climcropr_cache_details <- function(files = NULL) {
-  cache_dir <- rappdirs::user_config_dir("climcropr")
+  cache_dir <- rappdirs::user_cache_dir("climcropr")
   if (is.null(files)) {
     files <- list.files(cache_dir, ignore.case = TRUE, include.dirs = TRUE,
                         full.names = TRUE, recursive = TRUE)
@@ -117,7 +117,7 @@ getsize <- function(x) {
 
 #' @export
 print.climcropr_cache_info <- function(x, ...) {
-  cache_dir <- rappdirs::user_config_dir("climcropr")
+  cache_dir <- rappdirs::user_cache_dir("climcropr")
   cat("<climcropr cached files>", sep = "\n")
   cat(sprintf("  directory: %s\n", cache_dir), sep = "\n")
   for (i in seq_along(x)) {
