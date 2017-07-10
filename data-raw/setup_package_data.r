@@ -3,11 +3,12 @@
 #read in ecocrop database scraped from FAO website spring 2017
 #EcoCrop_DB.csv
 
-file_path <- system.file("extdata/", "EcoCrop_DB.csv", package = "climcropr")
+#file_path <- system.file("extdata/", "EcoCrop_DB.csv", package = "climcropr")
+file_path <- system.file("extdata/", "EcoCrop_DB2.csv", package = "climcropr")
 
 df_ecocrop <- read.csv(file_path)
 
-#devtools::use_data(df_ecocrop)
+#devtools::use_data(df_ecocrop, overwrite=TRUE)
 
 #df_ecocrop$COMNAME
 
