@@ -2,9 +2,9 @@
 title: "climcropr intro"
 author: "Andy South"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+#output: rmarkdown::html_vignette
 #        fig_caption: yes
-# output: pdf_document        
+output: pdf_document        
 vignette: >
   %\VignetteIndexEntry{climcropr intro}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=7)
 # library(sp) #for maps
 # library(tmap) #for maps
 # library(knitr) #for tables with kable
+library(climcropr)
 library(raster)
 library(rnaturalearth) #for maps
 library(dismo) #for ecocrop
@@ -304,3 +305,34 @@ plot(ec_out_beet - ec_out_beet_max, add=TRUE, horizontal=TRUE, axes=FALSE)
 plot(ne_countries(continent='Africa'), add=TRUE, border='grey', lwd=0.5)
 
 ```
+
+
+### min & max pH for selection of crops 
+### from new scraped ecocrop data base
+```{r, echo=FALSE, warnings=FALSE, message=FALSE}
+
+#BEWARE names seem to be different in new df_ecocrop$COMNAME
+#e.g. broom-corn is sorghum
+test_crops <- c('potato','broom-corn','maize','oat','barley','apple','lentil','groundnut','sugarbeet', "rice","chickpea")
+
+#test_crops <- c('potato','broom-corn','maize','barley')
+
+df_crop_ph <- data.frame(cropname=test_crops,
+                         phmin=NA, phmax=NA,
+                         phopmin=NA, phopmax=NA)
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+  df_crop_ph$phmin[cropnum] <- get_phmin(cropname)
+  df_crop_ph$phmax[cropnum] <- get_phmax(cropname) 
+  df_crop_ph$phopmin[cropnum] <- get_phopmin(cropname)
+  df_crop_ph$phopmax[cropnum] <- get_phopmax(cropname)   
+  cat(cropname, " min,max = ", df_crop_ph$phmin[cropnum], ",", df_crop_ph$phmax[cropnum])
+}
+
+
+
+
+```
+

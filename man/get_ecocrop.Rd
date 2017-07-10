@@ -4,10 +4,12 @@
 \alias{get_ecocrop}
 \title{get_ecocrop}
 \usage{
-get_ecocrop(cropname)
+get_ecocrop(cropname, field = NULL)
 }
 \arguments{
 \item{cropname}{an ecocrop cropname}
+
+\item{field}{a filed to select}
 }
 \description{
 get new ecocrop entry for a crop
@@ -17,4 +19,5 @@ data scraped from FAO website 2017
 }
 \examples{
 potato <- get_ecocrop('potato')
+get_ecocrop('maize','phmin')
 }

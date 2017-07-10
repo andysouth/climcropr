@@ -31,3 +31,59 @@ cropname <- 'potato'
 tst <- filter( df_ecocrop, str_detect(COMNAME, paste0("^",cropname,",")))
 
 tst$PHMIN
+
+## soil ph data
+# from https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=546
+# total available water capacity (mm water per 1 m soil depth),
+# soil organic carbon density (kg C/m**2 for 0-30cm depth range),
+# soil organic carbon density (kg C/m**2 for 0-100cm depth range),
+# soil carbonate carbon density (kg C/m**2 for 0-100cm depth range),
+# soil pH (0-30 cm depth range), and
+# soil pH (30-100 cm depth range).
+
+file_path <- system.file("extdata/", "wise_ph1.dat", package = "climcropr")
+
+rst_soil_ph <- raster(file_path)
+
+plot(rst_soil_ph)
+
+# category  0 : Background
+# category  1 : pH<=5.5
+# category  2 : 5.5<pH<=7.3
+# category  3 : 7.3<pH<=8.5
+# category  4 : 8.5<pH
+# category  5 : 4.0<pH<=8.5 Complex unit
+# category  6 : Glaciers
+# category  7 : Oceans
+
+rst_soil_ph[rst_soil_ph==7 | rst_soil_ph==6 | rst_soil_ph==0] <- NA
+
+image(rst_soil_ph)
+library(viridis)
+image(rst_soil_ph, col=viridis(5))
+
+## Add a category column to the Raster Attribute Table
+#rst_soil_ph <- as.factor(rst_soil_ph)
+rst_soil_ph <- ratify(rst_soil_ph)
+rat <- levels(rst_soil_ph)[[1]]
+rat[["pH"]] <- c("<=5.5",">5.5 <=7.3", ">7.3 <=8.5", ">8.5","Complex unit")
+levels(rst_soil_ph) <- rat
+
+rasterVis::levelplot(rst_soil_ph, col.regions=rev(terrain.colors(5)), xlab="", ylab="")
+rasterVis::levelplot(rst_soil_ph, col.regions=viridis(5), xlab="", ylab="")
+
+# looking at higher resolution soil ph data
+# regridded harmonised world soil database at 0.05 degree
+# ncdf files from here  : https://daac.ornl.gov/SOILS/guides/HWSD.html
+
+
+#file_path <- system.file("extdata/", "wise_ph1.dat", package = "climcropr")
+file_path <- file.path("C:\\Dropbox\\ueaHelix2017\\soil\\HWSD_1247\\data\\T_PH_H2O.nc4")
+
+rst_soil_ph2 <- raster(file_path)
+plot(rst_soil_ph2)
+hist(rst_soil_ph2)
+
+
+
+

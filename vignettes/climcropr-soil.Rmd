@@ -1,0 +1,84 @@
+---
+title: "climcropr soil"
+author: "Andy South"
+date: "`r Sys.Date()`"
+#output: rmarkdown::html_vignette
+#        fig_caption: yes
+output: pdf_document        
+vignette: >
+  %\VignetteIndexEntry{climcropr intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=7)
+
+# library(tidyverse)
+# library(forcats)
+# library(sp) #for maps
+# library(tmap) #for maps
+library(climcropr)
+library(raster)
+library(rnaturalearth) #for maps
+library(dismo) #for ecocrop
+library(knitr) #for tables with kable
+
+# extent object for use in plots
+ext <- raster::extent(-180,180,-60,85)
+
+```
+
+## looking at soil ph limits from ecocrop & applying to world harmonised soil database
+
+
+### min & max pH for selection of crops from new scraped ecocrop data base
+```{r, echo=FALSE, warnings=FALSE, message=FALSE}
+
+#BEWARE names seem to be different in new df_ecocrop$COMNAME
+#e.g. broom-corn is sorghum
+test_crops <- c('potato','broom-corn','maize','oat','barley','apple','lentil','groundnut','sugarbeet', "rice","chickpea")
+
+#test_crops <- c('potato','broom-corn','maize','barley')
+
+df_crop_ph <- data.frame(cropname=test_crops)
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+  df_crop_ph$phmin[cropnum] <- get_ecocrop(cropname,'phmin')
+  df_crop_ph$phmax[cropnum] <- get_ecocrop(cropname,'phmax')
+  df_crop_ph$phopmn[cropnum] <- get_ecocrop(cropname,'phopmn')
+  df_crop_ph$phopmx[cropnum] <- get_ecocrop(cropname,'phopmx')  
+  #cat(cropname, " min,max = ", df_crop_ph$phmin[cropnum], ",", df_crop_ph$phmax[cropnum])
+}
+
+kable(df_crop_ph)
+
+```
+
+### crop pH suitability maps, 1=suitable, 2=optimal
+```{r, echo=FALSE, warnings=FALSE, message=FALSE}
+
+
+#test_crops <- c('potato','broom-corn','maize','barley')
+
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+
+
+  rst <- suit_soil_ph(cropname, plot=FALSE)
+  
+  par(mar=c(0,0,2,0)) #bltr
+  plot(rst, main=paste0(cropname," soil pH suit=1, opt=2"), ext=ext)
+  plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+  
+}
+
+
+
+```
+
