@@ -28,19 +28,22 @@ library(knitr) #for tables with kable
 # extent object for use in plots
 ext <- raster::extent(-180,180,-60,85)
 
-```
-
-## looking at soil ph limits from ecocrop & applying to world harmonised soil database
-
-
-### min & max pH for selection of crops from new scraped ecocrop data base
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
 #BEWARE names seem to be different in new df_ecocrop$COMNAME
 #e.g. broom-corn is sorghum
 test_crops <- c('potato','broom-corn','maize','oat','barley','apple','lentil','groundnut','sugarbeet', "rice","chickpea")
 
 #test_crops <- c('potato','broom-corn','maize','barley')
+
+```
+
+## looking at soil ph and other limits from ecocrop & applying to world harmonised soil database
+## other soil parameters on end of document
+
+## ecocrop has drainage, depth and texture. Each seems to have a required (R) and optimal value.
+## They don't quite fit with data available in the harmonised world soil database and not clear to me whether they will be useful for us.
+
+### min & max pH for selection of crops from new scraped ecocrop data base
+```{r, echo=FALSE, warnings=FALSE, message=FALSE, eval=TRUE}
 
 df_crop_ph <- data.frame(cropname=test_crops)
 
@@ -59,8 +62,8 @@ kable(df_crop_ph)
 ```
 
 ### crop pH suitability maps, 1=suitable, 2=optimal
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
+```{r, echo=FALSE, warnings=FALSE, message=FALSE, eval=FALSE}
+#TODO re-enable eval=TRUE, disabling now to look at non pH params
 
 #test_crops <- c('potato','broom-corn','maize','barley')
 
@@ -78,7 +81,118 @@ for(cropnum in 1:length(test_crops))
   
 }
 
+```
 
+\pagebreak
+
+## crop drainage requirements from ecocrop 
+### don't seem that they will be very useful for discrimintaing areas
+
+```{r, echo=FALSE, warnings=FALSE, message=FALSE}
+
+dfvals <- data.frame(values=levels(df_ecocrop$DRA), stringsAsFactors = FALSE)
+kable(dfvals)
+
+df_crop_drain <- data.frame(cropname=test_crops)
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+  df_crop_drain$DRA[cropnum] <- get_ecocrop(cropname,'DRA')
+  df_crop_drain$DRAR[cropnum] <- get_ecocrop(cropname,'DRAR')
+  #cat(cropname, " min,max = ", df_crop_ph$phmin[cropnum], ",", df_crop_ph$phmax[cropnum])
+}
+
+#for example crops
+kable(df_crop_drain)
 
 ```
 
+
+The harmonised world soil database has drainage data in these categories which don't seem to relate directly.
+
+1. 150 mm water per m of the soil unit
+2. 125 mm
+3. 100 mm 
+4. 75 mm 
+5. 50 mm 
+6. 15 mm 
+7. 0 mm
+
+
+\pagebreak
+
+## soil depth requirements from ecocrop 
+### don't seem that they will be very useful for discrimintaing areas
+
+```{r, echo=FALSE, warnings=FALSE, message=FALSE}
+
+dfvals <- data.frame(values=levels(df_ecocrop$DEP), stringsAsFactors = FALSE)
+kable(dfvals)
+
+df_crop_depth <- data.frame(cropname=test_crops)
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+  df_crop_depth$DEP[cropnum] <- get_ecocrop(cropname,'DEP')
+  df_crop_depth$DEPR[cropnum] <- get_ecocrop(cropname,'DEPR')
+  #cat(cropname, " min,max = ", df_crop_ph$phmin[cropnum], ",", df_crop_ph$phmax[cropnum])
+}
+
+#for example crops
+kable(df_crop_depth)
+
+```
+
+World harmonised soil database has :
+
+REF_DEPTH	   
+Reference soil depth of all soil units are set at 100 cm, except for Rendzinas and Rankers of FAO-74 and Leptosols of FAO-90, where the reference soil depth is set at 30 cm, and for Lithosols of FAO-74 and Lithic Leptosols of FAO-90, where it is set at 10 cm.
+
+ROOTS	    
+Depth of obstacles to roots.	
+
+0.  no information, 
+1.  no obstacles to roots between 0 and 80 cm depth, 
+2.  obstacles to roots between 60 and 80 cm depth, 
+3.  obstacles between 40 and 60 cm, 
+4.  20 and 40 cm, 
+5.  0 and 80 cm, 
+6.  0 and 20 cm.
+
+
+
+\pagebreak
+
+## soil texture requirements from ecocrop 
+
+```{r, echo=FALSE, warnings=FALSE, message=FALSE}
+
+dfvals <- data.frame(values=levels(df_ecocrop$TEXT), stringsAsFactors = FALSE)
+kable(dfvals)
+
+df_crop_texture <- data.frame(cropname=test_crops)
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+  df_crop_texture$TEXT[cropnum] <- get_ecocrop(cropname,'TEXT')
+  df_crop_texture$TEXTR[cropnum] <- get_ecocrop(cropname,'TEXTR')
+  #cat(cropname, " min,max = ", df_crop_ph$phmin[cropnum], ",", df_crop_ph$phmax[cropnum])
+}
+
+#for example crops
+kable(df_crop_texture)
+
+```
+
+### harmonised world soil database has separate layers for % weight of :
+
+1. clay
+2. gravel
+3. sand
+4. silt 
+5. organic carbon
+
+Not clear how this could be related to ecocrop texture.
