@@ -29,6 +29,7 @@ run ecocrop for all cells in a passed raster stack for the specified crop
 }
 \details{
 based on code from run_ecocrop() by Adam Sparks
+CURRENTLY USES dismo::ecocrop() function, we may wish to refactor this to give us more control over
 }
 \examples{
 #takes a few mins to run

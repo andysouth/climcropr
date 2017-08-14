@@ -3,6 +3,7 @@
 #' run ecocrop for all cells in a passed raster stack for the specified crop
 #'
 #' based on code from run_ecocrop() by Adam Sparks
+#' CURRENTLY USES dismo::ecocrop() function, we may wish to refactor this to give us more control over
 #'
 #' @param crop the crop either a name or ecocrop object
 #' @param st_clim_all single raster stack containing all climate inputs (see data(st_clim))
@@ -33,13 +34,6 @@ ecocrop_a_raster <- function(crop,
 
   if (class(crop) != "ECOCROPcrop")
   {
-    #this shouldn't be necessary but getting repeated error
-    #Error in get(data(ECOcrops, envir = thisenvir), thisenvir) :  object 'ECOcrops' not found
-    #In addition: Warning messages:
-    #  1: In data(ECOcrops) : data set ‘ECOcrops’ not found
-    #data(ECOcrops)
-    #pot other solution http://stackoverflow.com/questions/42555811/using-external-data-in-a-package
-
     #crop <- dismo::getCrop(crop)
     crop <- getCrop(crop)
   }
