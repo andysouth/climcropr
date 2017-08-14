@@ -15,6 +15,11 @@
 #' @examples
 #' potato <- get_ecocrop('potato')
 #' get_ecocrop('maize','phmin')
+#' #comparing new & old versions of database
+#' cropname <- 'maize'
+#' library(dismo)
+#' cropold <- dismo::getCrop(cropname)
+#' cropnew <- get_ecocrop(cropname)
 
 get_ecocrop <- function(cropname,
                         field = NULL) {
@@ -24,6 +29,8 @@ get_ecocrop <- function(cropname,
   #TODO add some warning about if crop not present
   #TODO add some warning about if field not present
   #TODO can I vectorise to work on a vector of crops
+
+  # checking if the cropname appears as the first word in the COMNAME field
 
   #to test outside function
   #which(str_detect(df_ecocrop$COMNAME, regex(paste0("^",cropname,","), ignore_case = TRUE)))
@@ -35,7 +42,12 @@ get_ecocrop <- function(cropname,
   if (!is.null(field))
   {
     out <- dplyr::select(out, str_to_upper(field))
+    #i could put something here to allow multiple fields to be returned
+    #by only doing coversions below if a single field
+    #if (length(field)==1)
     out <- out[[1]] #to return a single value rather than a dataframe
+    #return factors as character
+    if (is.factor(out)) out <- as.character(out)
   }
 
   return(out)

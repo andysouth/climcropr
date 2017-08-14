@@ -20,4 +20,9 @@ data scraped from FAO website 2017
 \examples{
 potato <- get_ecocrop('potato')
 get_ecocrop('maize','phmin')
+#comparing new & old versions of database
+cropname <- 'maize'
+library(dismo)
+cropold <- dismo::getCrop(cropname)
+cropnew <- get_ecocrop(cropname)
 }
