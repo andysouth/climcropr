@@ -20,5 +20,10 @@ within_t_thresh(crop, month_tmin = NULL, month_tmax = NULL,
 are a crop's temperature thresholds satisfied by the passed monthly temperature data ?
 }
 \examples{
-within_t_thresh(potato, month_tmin = rep(0,12), month_tmax = rep(50,12))
+#0
+within_t_thresh('potato', month_tmin = rep(0,12), month_tmax = rep(50,12))
+#1
+within_t_thresh('potato', month_tmin = rep(20,12), month_tmax = rep(20,12))
+#just min or max. e.g. specify max and it ignores min
+within_t_thresh('potato', month_tmin = rep(0,12), month_tmax = rep(20,12), min_or_max='max')
 }

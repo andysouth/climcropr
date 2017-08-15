@@ -1,6 +1,7 @@
 #' within_t_thresh
 #'
 #' are a crop's temperature thresholds satisfied by the passed monthly temperature data ?
+#' TODO currently doesn't take into account growing season length but does need to.
 #'
 #'
 #' @param crop the crop either a name or ecocrop object
@@ -12,7 +13,12 @@
 #'
 #'
 #' @examples
-#' within_t_thresh(potato, month_tmin = rep(0,12), month_tmax = rep(50,12))
+#' #0
+#' within_t_thresh('potato', month_tmin = rep(0,12), month_tmax = rep(50,12))
+#' #1
+#' within_t_thresh('potato', month_tmin = rep(20,12), month_tmax = rep(20,12))
+#' #just min or max. e.g. specify max and it ignores min
+#' within_t_thresh('potato', month_tmin = rep(0,12), month_tmax = rep(20,12), min_or_max='max')
 
 within_t_thresh <- function(crop,
                              month_tmin = NULL,
@@ -28,13 +34,15 @@ within_t_thresh <- function(crop,
   }
 
 
-  in_thresh <- TRUE
+  in_thresh <- 0
 
   #todo check whether thresholds should be < or <=
 
-  if ( (min_or_max=='both' | min_or_max=='min') & min(month_tmin) < crop@TMIN ) in_thresh <- FALSE
+  if ( (min_or_max=='both' | min_or_max=='min') & min(month_tmin) < crop@TMIN ) in_thresh <- 0
 
-  if ( (min_or_max=='both' | min_or_max=='max') &  max(month_tmax) > crop@TMAX ) in_thresh <- FALSE
+  if ( (min_or_max=='both' | min_or_max=='max') &  max(month_tmax) > crop@TMAX ) in_thresh <- 0
 
   return(in_thresh)
 }
+
+
