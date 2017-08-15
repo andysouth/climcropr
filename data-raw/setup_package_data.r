@@ -3,8 +3,7 @@
 #read in ecocrop database scraped from FAO website spring 2017
 #EcoCrop_DB.csv
 
-#file_path <- system.file("extdata/", "EcoCrop_DB.csv", package = "climcropr")
-file_path <- system.file("extdata/", "EcoCrop_DB2.csv", package = "climcropr")
+file_path <- system.file("extdata/", "EcoCrop_DB.csv", package = "climcropr")
 
 df_ecocrop <- read.csv(file_path)
 
@@ -85,6 +84,23 @@ rst_soil_ph2 <- raster(file_path)
 plot(rst_soil_ph2)
 hist(rst_soil_ph2)
 
+# 0.5 degree country mask
+file_path <- file.path("C:\\Dropbox\\ueaHelix2017\\country_mask\\ctry_reg_income_0.5_2013.nc")
+rast_countries <- raster(file_path)
+#plot(rast_c)
+df_rast_countries <- data.frame(country_rst_num = raster::getValues(rast_countries), stringsAsFactors = FALSE)
+
+df_c_lookup <- readr::read_table2("C:\\Dropbox\\ueaHelix2017\\country_mask\\gtap_gcam_income_2013.dat", col_names=FALSE)
+names(df_c_lookup) <- c('country_rst_num','iso3c','country','region_numeric','region','x6')
+
+#now left join df_c_lookup onto df_rast_countries
+df_rast_c_lookup <- dplyr::left_join(df_rast_countries, df_c_lookup)
+
+#todo add continent on here
+
+#how it can be used to aggregate by region
+#put into a function that will accept either a raster or a dataframe of 259200 rows
 
 
-
+#now save this to the package
+devtools::use_data(df_rast_c_lookup)
