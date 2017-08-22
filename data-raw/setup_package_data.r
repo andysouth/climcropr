@@ -5,7 +5,7 @@
 
 file_path <- system.file("extdata/", "EcoCrop_DB.csv", package = "climcropr")
 
-df_ecocrop <- read.csv(file_path)
+df_ecocrop <- read_csv(file_path)
 
 #devtools::use_data(df_ecocrop, overwrite=TRUE)
 
@@ -15,22 +15,11 @@ df_ecocrop <- read.csv(file_path)
 # dividing the string by commas and taking the first item will
 # work for at least the following crops
 # maize, potato and rice
+# so I should create a new column, maybe just called NAME
+df_ecocrop <- df_ecocrop %>%
+  rowwise() %>%
+  mutate(NAME= stringr::str_split(COMNAME, ",", simplify=TRUE)[1])
 
-#potato
-df_ecocrop$COMNAME[2231]
-#trying and failing to split by comma and match first token
-
-str_split(df_ecocrop$COMNAME, ",")[1] == 'potato'
-#library(stringr)
-filter( df_ecocrop, str_split(COMNAME, ",")[1] == 'potato')
-
-cropname <- 'potato'
-#could instead add on a comma and match that starting the string
-#^ is regex for start of string
-
-tst <- filter( df_ecocrop, str_detect(COMNAME, paste0("^",cropname,",")))
-
-tst$PHMIN
 
 ## soil ph data
 # from https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=546
