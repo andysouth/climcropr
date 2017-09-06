@@ -1,0 +1,43 @@
+---
+title: "climcropr looking at crop gowth cycles"
+author: "Andy South"
+date: "`r Sys.Date()`"
+#output: rmarkdown::html_vignette
+#        fig_caption: yes
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{climcropr growth cycles}
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=7)
+
+library(tidyverse)
+library(stringr)
+# library(forcats)
+# library(sp) #for maps
+# library(tmap) #for maps
+# library(knitr) #for tables with kable
+library(climcropr)
+library(raster)
+library(rnaturalearth) #for maps
+library(dismo) #for ecocrop
+
+# extent object for use in plots
+ext <- extent(-180,180,-60,80)
+
+```
+
+```{r, eval=TRUE, echo=FALSE}
+
+# plot crop cycle min and max for a range of crops
+
+cropnames <- c('maize','rice','potato','soya bean','sugarcane')
+cr_plot_cycle(cropnames)
+
+```
+
+
