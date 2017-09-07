@@ -1,5 +1,5 @@
 ---
-title: "climcropr looking at crop gowth cycles"
+title: "towrads a simpler ecocrop model"
 author: "Andy South"
 date: "`r Sys.Date()`"
 #output: rmarkdown::html_vignette
@@ -31,13 +31,21 @@ ext <- extent(-180,180,-60,80)
 
 ```
 
+The FAO ecocrop database holds data for more than 2500 crops including requirements for temperature, rainfall and soils based upon expert judgement.
+
+The ecocrop modelling approach estimates suitability for crops based on temperature and precipitation using these requirements.
+
+
+### length of crop growth cycles from ecocrop
 ```{r, eval=TRUE, echo=FALSE}
 
-# plot crop cycle min and max for a range of crops
+# plot crop cycle min and max 
 
 cropnames <- c('maize','rice','potato','soya bean','sugarcane')
 cr_plot_cycle(cropnames)
 
 ```
+
+
 
 
