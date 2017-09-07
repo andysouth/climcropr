@@ -12,6 +12,7 @@
 #' @param st_prec precipitation by month in a raster stack
 #' @param rainfed default TRUE
 #' @param filename optional output file
+#' @param simpler trial of simpler suitability calc, done via cr_suit_simpler()
 #' @param ... extra parameters to pass to writeRaster
 #'
 #' @export
@@ -20,9 +21,14 @@
 #' @import dismo raster
 #'
 #' @examples
-#' #takes a few mins to run
+#' #subset climate data to make faster run
+#' st_clim2 <- raster::crop(st_clim, extent(-10,10,0,60))
+#' rast_potato_suit2 <- ecocrop_a_raster('potato',st_clim2,simpler=TRUE)
+#' plot(rast_potato_suit2)
+#' #world takes a few mins to run
 #' #rast_potato_suit <- ecocrop_a_raster('potato',st_clim)
-
+#' #st_potato_suit <- ecocrop_a_raster('potato',st_clim, simpler=TRUE, diagnostic=TRUE)
+#'
 ecocrop_a_raster <- function(crop,
                              st_clim_all = NULL,
                              st_tmin = NULL,
@@ -30,6 +36,9 @@ ecocrop_a_raster <- function(crop,
                              st_prec = NULL,
                              rainfed = TRUE,
                              filename = NULL,
+                             plot = TRUE,
+                             simpler = TRUE,
+                             diagnostic = TRUE, #think of better name for outputting suit by attribute
                              ...) {
 
   if (class(crop) != "ECOCROPcrop")
@@ -54,9 +63,25 @@ ecocrop_a_raster <- function(crop,
     st_prec <- raster::subset(st_clim_all, subset=names_prec)
   }
 
+  if (!diagnostic)
+  {
+    outraster <- raster(st_tavg)
+    v         <- vector(length = ncol(outraster))
+  } #else
+  {
+    #setting up raster stack to receive diagnostic outputs
+    #or just stack it afterwards
+    outraster <- raster(st_tavg)
 
-  outraster <- raster(st_tavg)
-  v         <- vector(length = ncol(outraster))
+    #initialise rasters to receive results
+    #must be a better way of doing this
+    r_tmin <- r_tmax <- r_tkill <- r_rainhi <- r_rainlo <- r_all <- raster(st_tavg)
+    v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- vector(length = ncol(outraster))
+  }
+
+
+  #to receive more detailed results
+
 
   #for each row in the raster
   for (r in 1:nrow(outraster)){
@@ -64,8 +89,8 @@ ecocrop_a_raster <- function(crop,
     # andy added
     if (r%%10 == 1) message('row',r,' of ',nrow(outraster))
 
-    #a to receive results
-    v[] <- NA
+    if (!diagnostic) v[] <- NA
+    else v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- NA
 
     tavg <- getValues(st_tavg, r)
     tmin <- getValues(st_tmin, r)
@@ -83,24 +108,75 @@ ecocrop_a_raster <- function(crop,
         clm <- cbind(data.frame(tmin[i, ]), tavg[i, ])
       }
 
-      #a? seems like it might fail if rainfed=FALSE due to clm[3]
 
       #only do calc if no NAs
       if(sum(is.na(clm)) == 0) {
-        e <- dismo::ecocrop(crop = crop, tmin = clm[, 1],
-                     tavg = clm[, 2],
-                     prec = clm[, 3],
-                     rain = rainfed)
-        #v[i] <- e@maxper[1]
-        # outputting max suitability, which is suit in the best month
-        v[i] <- e@maxsuit[1]
-        #TODO can I get it to output possible too ?
-        #e@suitability gives suit for each of 12 months
+
+        if (simpler) #new simpler trial suitability
+        {
+          #adding in a diagnostic option
+          #to output a raster stack of all suitabilities
+          if (!diagnostic)
+          {
+            v[i] <- cr_suit_simpler(crop = crop,
+                                tmin = clm[, 1],
+                                tavg = clm[, 2],
+                                prec = clm[, 3],
+                                rain = rainfed)
+          } else
+          {
+            dfmonthsuit <- cr_suit_simpler_month(crop = crop,
+                                    tmin = clm[, 1],
+                                    tavg = clm[, 2],
+                                    prec = clm[, 3],
+                                    rain = rainfed)
+
+            #put max monthly suit for each attribute
+            v_tmin[i] <- max(dfmonthsuit$temp_min)
+            v_tmax[i] <- max(dfmonthsuit$temp_max)
+            v_tkill[i] <- max(dfmonthsuit$temp_kill)
+            v_rainhi[i] <- max(dfmonthsuit$rain_high)
+            v_rainlo[i] <- max(dfmonthsuit$rain_low)
+            v_all[i] <- max(dfmonthsuit$all)
+          }
+
+        } else #version using dismp::ecocrop
+        {
+          e <- dismo::ecocrop(crop = crop,
+                              tmin = clm[, 1],
+                              tavg = clm[, 2],
+                              prec = clm[, 3],
+                              rain = rainfed)
+          #v[i] <- e@maxper[1]
+          # outputting max suitability, which is suit in the best month
+          v[i] <- e@maxsuit[1]
+          #e@suitability gives suit for each of 12 months
+        }
       }
     }
 
-    outraster[r, ] <- v
-    #outr <- writeRaster(outr, filename, ...)
+    if (!diagnostic)
+    {
+      outraster[r, ] <- v
+    } else
+    {
+      r_tmin[r, ] <- v_tmin
+      r_tmax[r, ] <- v_tmax
+      r_tkill[r, ] <- v_tkill
+      r_rainhi[r, ] <- v_rainhi
+      r_rainlo[r, ] <- v_rainlo
+      r_all[r, ] <- v_all
+
+    }
+
+  } # end of rows loop
+
+  if (diagnostic)
+  {
+    #stack the rasters
+    outraster <- stack(r_tmin, r_tmax, r_tkill, r_rainhi, r_rainlo, r_all)
+    #name the layers based on the datframe output from cr_suit_simpler_month()
+    names(outraster) <- colnames(dfmonthsuit)
   }
 
   #andy move this  outside of the rows loop of the input raster
@@ -108,6 +184,8 @@ ecocrop_a_raster <- function(crop,
     filename  <- raster::trim(filename)
     outraster <- writeRaster(outraster, filename, ...)
   }
+
+  if (plot) plot(outraster)
 
   return(outraster)
 }
