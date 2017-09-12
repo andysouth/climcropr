@@ -18,6 +18,7 @@ within_t_thresh(crop, month_tmin = NULL, month_tmax = NULL,
 }
 \description{
 are a crop's temperature thresholds satisfied by the passed monthly temperature data ?
+TODO currently doesn't take into account growing season length but does need to.
 }
 \examples{
 #0

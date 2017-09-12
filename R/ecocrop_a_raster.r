@@ -13,6 +13,7 @@
 #' @param rainfed default TRUE
 #' @param filename optional output file
 #' @param simpler trial of simpler suitability calc, done via cr_suit_simpler()
+#' @param diagnostic whether to output suitabilities by the different attributes
 #' @param ... extra parameters to pass to writeRaster
 #'
 #' @export
@@ -28,7 +29,7 @@
 #' #world takes a few mins to run
 #' #rast_potato_suit <- ecocrop_a_raster('potato',st_clim)
 #' #st_potato_suit <- ecocrop_a_raster('potato',st_clim, simpler=TRUE, diagnostic=TRUE)
-#'
+#' #st_maize_suit <- ecocrop_a_raster('maize',st_clim, simpler=TRUE, diagnostic=TRUE)
 ecocrop_a_raster <- function(crop,
                              st_clim_all = NULL,
                              st_tmin = NULL,
@@ -75,9 +76,13 @@ ecocrop_a_raster <- function(crop,
 
     #initialise rasters to receive results
     #must be a better way of doing this
-    r_tmin <- r_tmax <- r_tkill <- r_rainhi <- r_rainlo <- r_all <- raster(st_tavg)
-    v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- vector(length = ncol(outraster))
-  }
+    #r_tmin <- r_tmax <- r_tkill <- r_rainhi <- r_rainlo <- r_all <- raster(st_tavg)
+    #v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- vector(length = ncol(outraster))
+    r_tmin_gmin <- r_tmin_gmax <- r_tmax <- r_tkill <- r_rainhi <- r_rainlo_gmin <- r_rainlo_gmax <- r_all <- raster(st_tavg)
+    #v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- vector(length = ncol(outraster))
+    v_tmin_gmin <- v_tmin_gmax <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo_gmin <- v_rainlo_gmax <- v_all <- vector(length = ncol(outraster))
+
+    }
 
 
   #to receive more detailed results
@@ -90,7 +95,8 @@ ecocrop_a_raster <- function(crop,
     if (r%%10 == 1) message('row',r,' of ',nrow(outraster))
 
     if (!diagnostic) v[] <- NA
-    else v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- NA
+    #else v_tmin <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo <- v_all <- NA
+    else v_tmin_gmin <- v_tmin_gmax <- v_tmax <- v_tkill <- v_rainhi <- v_rainlo_gmin <- v_rainlo_gmax <- v_all <- NA
 
     tavg <- getValues(st_tavg, r)
     tmin <- getValues(st_tmin, r)
@@ -132,11 +138,15 @@ ecocrop_a_raster <- function(crop,
                                     rain = rainfed)
 
             #put max monthly suit for each attribute
-            v_tmin[i] <- max(dfmonthsuit$temp_min)
+            #v_tmin[i] <- max(dfmonthsuit$temp_min)
+            v_tmin_gmin[i] <- max(dfmonthsuit$temp_min_gmin)
+            v_tmin_gmax[i] <- max(dfmonthsuit$temp_min_gmax)
             v_tmax[i] <- max(dfmonthsuit$temp_max)
             v_tkill[i] <- max(dfmonthsuit$temp_kill)
             v_rainhi[i] <- max(dfmonthsuit$rain_high)
-            v_rainlo[i] <- max(dfmonthsuit$rain_low)
+            #v_rainlo[i] <- max(dfmonthsuit$rain_low)
+            v_rainlo_gmin[i] <- max(dfmonthsuit$rain_low_gmin)
+            v_rainlo_gmax[i] <- max(dfmonthsuit$rain_low_gmax)
             v_all[i] <- max(dfmonthsuit$all)
           }
 
@@ -160,11 +170,15 @@ ecocrop_a_raster <- function(crop,
       outraster[r, ] <- v
     } else
     {
-      r_tmin[r, ] <- v_tmin
+      #r_tmin[r, ] <- v_tmin
+      r_tmin_gmin[r, ] <- v_tmin_gmin
+      r_tmin_gmax[r, ] <- v_tmin_gmax
       r_tmax[r, ] <- v_tmax
       r_tkill[r, ] <- v_tkill
       r_rainhi[r, ] <- v_rainhi
-      r_rainlo[r, ] <- v_rainlo
+      #r_rainlo[r, ] <- v_rainlo
+      r_rainlo_gmin[r, ] <- v_rainlo_gmin
+      r_rainlo_gmax[r, ] <- v_rainlo_gmax
       r_all[r, ] <- v_all
 
     }
@@ -174,7 +188,8 @@ ecocrop_a_raster <- function(crop,
   if (diagnostic)
   {
     #stack the rasters
-    outraster <- stack(r_tmin, r_tmax, r_tkill, r_rainhi, r_rainlo, r_all)
+    #outraster <- stack(r_tmin, r_tmax, r_tkill, r_rainhi, r_rainlo, r_all)
+    outraster <- stack(r_tmin_gmin, r_tmin_gmax, r_tmax, r_tkill, r_rainhi, r_rainlo_gmin, r_rainlo_gmax, r_all)
     #name the layers based on the datframe output from cr_suit_simpler_month()
     names(outraster) <- colnames(dfmonthsuit)
   }

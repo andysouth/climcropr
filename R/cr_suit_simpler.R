@@ -51,6 +51,9 @@ cr_suit_simpler <- function(crop, tmin, tavg, prec, rainfed) {
 cr_suit_simpler_month <- function(crop, tmin, tavg, prec, rainfed) {
 
   # use crop@GMIN / 30 as minimum months of crop cycle needed
+  # note that this round both up and down
+  # TODO should use ceiling() to round up
+  # e.g. if a crop needs 2.5 months growing cycle then we have to assess against minimum of 3
   mincycle <- round( crop@GMIN / 30)
   maxcycle <- round( crop@GMAX / 30)
 
@@ -64,11 +67,21 @@ cr_suit_simpler_month <- function(crop, tmin, tavg, prec, rainfed) {
   # If any months in the year are suitable then that area is suitable.
 
   # try putting suit results into a dataframe
-  dfmonthsuit <- data.frame(temp_min=rep(NA,12),
+  # dfmonthsuit <- data.frame(temp_min=rep(NA,12),
+  #                           temp_max=rep(NA,12),
+  #                           temp_kill=NA,
+  #                           rain_high=NA,
+  #                           rain_low=NA,
+  #                           all=NA)
+
+  # try putting suit results into a dataframe
+  dfmonthsuit <- data.frame(temp_min_gmin=rep(NA,12),
+                            temp_min_gmax=rep(NA,12),
                             temp_max=rep(NA,12),
                             temp_kill=NA,
                             rain_high=NA,
-                            rain_low=NA,
+                            rain_low_gmin=NA,
+                            rain_low_gmax=NA,
                             all=NA)
 
   # 1) is tavg within TMIN & TMAX for duration months after each start month
@@ -81,7 +94,10 @@ cr_suit_simpler_month <- function(crop, tmin, tavg, prec, rainfed) {
   #find if each month is start of growing cycle of temp suitability
   #m_temp_suit_cycle <- movingFun(m_t_suit, n=mincycle, fun=min, type='from', circular=TRUE)
   #dfmonthsuit$temperature <- movingFun(m_t_suit, n=mincycle, fun=min, type='from', circular=TRUE)
-  dfmonthsuit$temp_min <- movingFun(m_tmin_suit, n=mincycle, fun=min, type='from', circular=TRUE)
+  #dfmonthsuit$temp_min <- movingFun(m_tmin_suit, n=mincycle, fun=min, type='from', circular=TRUE)
+  dfmonthsuit$temp_min_gmin <- movingFun(m_tmin_suit, n=mincycle, fun=min, type='from', circular=TRUE)
+  dfmonthsuit$temp_min_gmax <- movingFun(m_tmin_suit, n=maxcycle, fun=min, type='from', circular=TRUE)
+
   dfmonthsuit$temp_max <- movingFun(m_tmax_suit, n=mincycle, fun=min, type='from', circular=TRUE)
 
 
@@ -103,13 +119,14 @@ cr_suit_simpler_month <- function(crop, tmin, tavg, prec, rainfed) {
     # 4) GMAX months where cumulative precip >= RMIN
     # need to total up precip in the following months first
     # so its diff from temp
-    m_rmin_cum <- movingFun(prec, n=mincycle, fun=sum, type='from', circular=TRUE)
-    m_rmax_cum <- movingFun(prec, n=maxcycle, fun=sum, type='from', circular=TRUE)
+    m_rcum_gmin <- movingFun(prec, n=mincycle, fun=sum, type='from', circular=TRUE)
+    m_rcum_gmax <- movingFun(prec, n=maxcycle, fun=sum, type='from', circular=TRUE)
 
     # m_rmin_suit_cycle <- ifelse(m_rmin_cum <= crop@RMAX, 1, 0)
     # m_rmax_suit_cycle <- ifelse(m_rmax_cum >= crop@RMIN, 1, 0)
-    dfmonthsuit$rain_high <- ifelse(m_rmin_cum <= crop@RMAX, 1, 0)
-    dfmonthsuit$rain_low <- ifelse(m_rmax_cum >= crop@RMIN, 1, 0)
+    dfmonthsuit$rain_high <- ifelse(m_rcum_gmin <= crop@RMAX, 1, 0)
+    dfmonthsuit$rain_low_gmin <- ifelse(m_rcum_gmin >= crop@RMIN, 1, 0)
+    dfmonthsuit$rain_low_gmax <- ifelse(m_rcum_gmax >= crop@RMIN, 1, 0)
 
     #bind on columns of precip suit to temperature calc above
     # m_suit_all <- cbind(m_suit_all,

@@ -40,6 +40,7 @@ cr_plot_temp <- function(cropnames=c('maize','rice'))
     geom_point(aes(y=TMAX), shape=6) +   #down triangle
     geom_point(aes(y=TOPMN), shape=24, size=1, fill='blue') + #up triangle
     geom_point(aes(y=TOPMX), shape=25, size=1, fill='blue') +   #down triangle
+    geom_point(aes(y=KTMP), size=1, fill='red') +   #kill temp red dot, is assessed -5
     ylab('min and max temperatures degrees C') +
     xlab('') +
     ylim(0,NA) +

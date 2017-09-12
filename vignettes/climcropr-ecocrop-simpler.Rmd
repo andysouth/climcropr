@@ -1,5 +1,5 @@
 ---
-title: "towrads a simpler ecocrop model"
+title: "Towards a simpler ecocrop model"
 author: "Andy South"
 date: "`r Sys.Date()`"
 #output: rmarkdown::html_vignette
@@ -31,9 +31,27 @@ ext <- extent(-180,180,-60,80)
 
 ```
 
-The FAO ecocrop database holds data for more than 2500 crops including requirements for temperature, rainfall and soils based upon expert judgement.
+### Abstract
+It's my opinion that there are flaws within the ecocrop modelling approach and these are not justified by tests against field data. The crop parameters stored within the FAO ecocrop database may still be useful. I suggest that a simpler application of the ecocrop crop parameters would be better justified. I think it would be better to aim for a method that could exclude areas that are definitely unsuitable rather than trying to push to generate suitability values. I have developed some R code to give easier access to the FAO ecocrop parameters and to make it easier to test different approaches to combining them with global climate data.
 
-The ecocrop modelling approach estimates suitability for crops based on temperature and precipitation using these requirements.
+### Background
+The FAO ecocrop database holds data for more than 2500 crops including requirements for temperature, rainfall and soils based upon expert judgement. The ecocrop modelling approach estimates suitability for crops based on temperature and precipitation using these requirements. The ecocrop modelling approach has been implemented in a number of slightly different ways. Ecocrop the modelling is designed to be simpler than other crop models allowing it to be applied to a wider range of crops and situations. However ecocrop the model as implemented in R and Diva-GIS has some aspects that are not well justified.
+
+In summary the ecocrop the modelling approach :
+1. Calculates a mean of the minimum and maximum crop growth cycle
+2. Rounds this mean (up or down) to the nearest number of months to calculate a 'duration'
+3. Finds whether there are 'duration' consecutive months in between the ecocrop temperature limits
+4. Finds whether there is a concurrent 'duration' period where the total precipitation is between the ecocrop rainfall requirements of the crop.  
+
+This is a broad summary of the ecocrop model as implemented within the R package dismo and with Diva-GIS.
+
+In addition the model uses 'optimal' temperature and precipitation limits specified in FAO ecocrop to develop an index of suitability per month, the best month and the value of the index in the best month.
+
+Ecocrop the model as implemented in this way has not been well tested against empirical data.
+
+For what is supposed to be a simple modelling approach the method becomes quite tricky and not very transparent.
+
+Firstly it doesn't seem very mechanistic to me that a mean of the minimum and maximum crop growth cycles is used as one of the most influential parameters. For example for maize the minimum and maximum crop growth cycles are 65 days and 365 days which round to 3 months and 12 months. The ecocrop model thus assesses temperatures for a 7 month growth cycle. The figure below shows the minimum and maximum crop growth cycles stored within ecocrop for some important crops.
 
 
 ### length of crop growth cycles from ecocrop
@@ -41,11 +59,22 @@ The ecocrop modelling approach estimates suitability for crops based on temperat
 
 # plot crop cycle min and max 
 
-cropnames <- c('maize','rice','potato','soya bean','sugarcane')
+cropnames <- c('maize','wheat','rice','potato','soya bean','sugarcane')
 cr_plot_cycle(cropnames)
 
 ```
 
+Secondly the crop parameters as specified in the FAO ecocrop database are necessarily very broad. Whilst they are based on expert judgement they cannot hope to capture all of the processes that influence the suitability of an area for a crop. For thi reason I feel it may be pushing the method too far to develop a suitability value between 0 and 1. I note also that there are few data available to test such an index at a global scale. I feel that a more realistic goal would be to try to predict which areas are definitely not suitable for a crop.
 
+A simpler, more transparent, method could allow us to use both the minimum and maximum growth cycles and to develop predictions of which areas are not suitable for a crop.
+
+The proposed method is : 
+
+1. Use the minimum crop growth cycle to assess whether there is a minimum period within the year within the crop temperature limits that could allow the crop to grow. 
+2. Use the maximum crop growth cycle to assess whether there is a period that could allow the crop to get sufficient water.
+
+Trials have shown that using either the maximum crop growth cycle to assess temperature or the minimum crop growth cycle to assess rainfall leads to the exclusion of unrealistic areas (e.g. excluding maize from most of Europe).
+
+The base ecocrop predictions have some aspects that look wrong for example also predicting that maize will not grow in Europe. [show map & refer to potato]
 
 

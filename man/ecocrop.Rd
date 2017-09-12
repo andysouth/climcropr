@@ -30,7 +30,8 @@ This is from .doEcocrop, some additional data setup occurs in dismo::ecocrop and
 source : https://r-forge.r-project.org/scm/viewvc.php/pkg/dismo/R/ecocrop.R?view=markup&root=dismo
 }
 \examples{
-ecocrop('potato', 5:16, 15:26, runif(12)*100)
+crop <- getCrop('potato')
+ecocrop(crop, 5:16, 15:26, runif(12)*100, rainfed=TRUE)
 crop <- getCrop('Hot pepper')
 ecocrop(crop, 5:16, 15:26, rainfed=FALSE)
 }

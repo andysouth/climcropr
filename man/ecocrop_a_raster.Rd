@@ -5,7 +5,8 @@
 \title{ecocrop_a_raster}
 \usage{
 ecocrop_a_raster(crop, st_clim_all = NULL, st_tmin = NULL, st_tavg = NULL,
-  st_prec = NULL, rainfed = TRUE, filename = NULL, ...)
+  st_prec = NULL, rainfed = TRUE, filename = NULL, plot = TRUE,
+  simpler = TRUE, diagnostic = TRUE, ...)
 }
 \arguments{
 \item{crop}{the crop either a name or ecocrop object}
@@ -22,6 +23,10 @@ ecocrop_a_raster(crop, st_clim_all = NULL, st_tmin = NULL, st_tavg = NULL,
 
 \item{filename}{optional output file}
 
+\item{simpler}{trial of simpler suitability calc, done via cr_suit_simpler()}
+
+\item{diagnostic}{whether to output suitabilities by the different attributes}
+
 \item{...}{extra parameters to pass to writeRaster}
 }
 \description{
@@ -32,6 +37,12 @@ based on code from run_ecocrop() by Adam Sparks
 CURRENTLY USES dismo::ecocrop() function, we may wish to refactor this to give us more control over
 }
 \examples{
-#takes a few mins to run
+#subset climate data to make faster run
+st_clim2 <- raster::crop(st_clim, extent(-10,10,0,60))
+rast_potato_suit2 <- ecocrop_a_raster('potato',st_clim2,simpler=TRUE)
+plot(rast_potato_suit2)
+#world takes a few mins to run
 #rast_potato_suit <- ecocrop_a_raster('potato',st_clim)
+#st_potato_suit <- ecocrop_a_raster('potato',st_clim, simpler=TRUE, diagnostic=TRUE)
+#st_maize_suit <- ecocrop_a_raster('maize',st_clim, simpler=TRUE, diagnostic=TRUE)
 }
