@@ -90,6 +90,67 @@ df_rast_c_lookup <- dplyr::left_join(df_rast_countries, df_c_lookup)
 #how it can be used to aggregate by region
 #put into a function that will accept either a raster or a dataframe of 259200 rows
 
-
 #now save this to the package
 devtools::use_data(df_rast_c_lookup)
+
+# putting example prediction data and corresponding Mirca data into package
+# for 4 main crops
+
+# simpler suitability
+maize_suitsimp <- ecocrop_a_raster('maize', st_clim, simpler=TRUE, rainfed=TRUE, diagnostic=FALSE)
+rice_suitsimp <- ecocrop_a_raster('rice', st_clim, simpler=TRUE, rainfed=TRUE, diagnostic=FALSE)
+wheat_suitsimp <- ecocrop_a_raster('wheat', st_clim, simpler=TRUE, rainfed=TRUE, diagnostic=FALSE)
+soya_bean_suitsimp <- ecocrop_a_raster('soya bean', st_clim, simpler=TRUE, rainfed=TRUE, diagnostic=FALSE)
+
+devtools::use_data(maize_suitsimp)
+devtools::use_data(rice_suitsimp)
+devtools::use_data(wheat_suitsimp)
+devtools::use_data(soya_bean_suitsimp)
+
+# ecocrop
+maize_ecocrop <- ecocrop_a_raster('maize', st_clim, simpler=FALSE, rainfed=TRUE, diagnostic=FALSE)
+rice_ecocrop <- ecocrop_a_raster('rice', st_clim, simpler=FALSE, rainfed=TRUE, diagnostic=FALSE)
+wheat_ecocrop <- ecocrop_a_raster('wheat', st_clim, simpler=FALSE, rainfed=TRUE, diagnostic=FALSE)
+soya_bean_ecocrop <- ecocrop_a_raster('soya bean', st_clim, simpler=FALSE, rainfed=TRUE, diagnostic=FALSE)
+
+devtools::use_data(maize_ecocrop)
+devtools::use_data(rice_ecocrop)
+devtools::use_data(wheat_ecocrop)
+devtools::use_data(soya_bean_ecocrop)
+
+# mirca
+# get_mirca not currently working
+# temporary solution to read into package
+folder <- 'C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\'
+# mirca codes maize(2), wheat (1), rice (3), soybean (8)
+maize_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop02_ha_30mn.asc.gz')))
+rice_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop01_ha_30mn.asc.gz')))
+wheat_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop03_ha_30mn.asc.gz')))
+soya_bean_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop08_ha_30mn.asc.gz')))
+
+devtools::use_data(maize_mirca)
+devtools::use_data(rice_mirca)
+devtools::use_data(wheat_mirca)
+devtools::use_data(soya_bean_mirca)
+
+# stack all rasters into a single file (? or one file per crop)
+stm <- raster::stack( maize_suitsimp, maize_ecocrop, maize_mirca )
+# must be a better way of naming these
+names(stm) <- c('maize_suitsimp', 'maize_ecocrop', 'maize_mirca')
+
+str <- raster::stack( rice_suitsimp, rice_ecocrop, rice_mirca )
+# must be a better way of naming these
+names(str) <- c('rice_suitsimp', 'rice_ecocrop', 'rice_mirca')
+
+stw <- raster::stack( wheat_suitsimp, wheat_ecocrop, wheat_mirca )
+# must be a better way of naming these
+names(stw) <- c('wheat_suitsimp', 'wheat_ecocrop', 'wheat_mirca')
+
+sts <- raster::stack( soya_bean_suitsimp, soya_bean_ecocrop, soya_bean_mirca )
+# must be a better way of naming these
+names(sts) <- c('soya_bean_suitsimp', 'soya_bean_ecocrop', 'soya_bean_mirca')
+
+st <- raster::stack(stm, str, stw, sts)
+
+devtools::use_data(st)
+

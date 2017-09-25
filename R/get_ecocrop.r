@@ -22,6 +22,7 @@
 #' cropnew <- get_ecocrop(cropname)
 
 get_ecocrop <- function(cropname,
+                        ecocrop_object = FALSE,
                         field = NULL) {
 
   data("df_ecocrop")
@@ -37,6 +38,33 @@ get_ecocrop <- function(cropname,
 
   #case insensitive
   out <- dplyr::filter( df_ecocrop, str_detect(COMNAME, regex(paste0("^",cropname,","), ignore_case = TRUE)))
+
+  # do I want to offer option to return as an ecocrop object ?
+  # e.g. to use within ecocrop_a_raster ??
+  if (ecocrop_object)
+  {
+    #dismo - I would prefer not to be reliant on it
+    crop <- new('ECOCROPcrop')
+
+    crop@GMIN  <- as.numeric(out[,'GMIN'])
+    crop@GMAX   <- as.numeric(out[,'GMAX'])
+    crop@KTMP   <- as.numeric(out[,'KTMP'])
+    crop@TMIN   <- as.numeric(out[,'TMIN'])
+    crop@TOPMN  <- as.numeric(out[,'TOPMN'])
+    crop@TOPMX  <- as.numeric(out[,'TOPMX'])
+    crop@TMAX   <- as.numeric(out[,'TMAX'])
+    crop@RMIN   <- as.numeric(out[,'RMIN'])
+    crop@ROPMN  <- as.numeric(out[,'ROPMN'])
+    crop@ROPMX  <- as.numeric(out[,'ROPMX'])
+    crop@RMAX   <- as.numeric(out[,'RMAX'])
+
+    #if no kill temp set it to 0
+    #this is what dismo::ecocrop does
+    if (is.na(crop@KTMP)) crop@KTMP <- 0
+
+    return(crop)
+  }
+
 
   #select just a single field if one is specified
   if (!is.null(field))

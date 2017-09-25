@@ -4,11 +4,12 @@ author: "Andy South"
 date: "`r Sys.Date()`"
 #output: rmarkdown::html_vignette
 #        fig_caption: yes
-output: pdf_document
-vignette: >
-  %\VignetteIndexEntry{climcropr growth cycles}
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteEncoding{UTF-8}
+#output: pdf_document
+output: word_document
+#vignette: >
+#  %\VignetteIndexEntry{climcropr growth cycles}
+#%\VignetteEngine{knitr::rmarkdown}
+#%\VignetteEncoding{UTF-8}
 ---
 
 
@@ -71,10 +72,51 @@ A simpler, more transparent, method could allow us to use both the minimum and m
 The proposed method is : 
 
 1. Use the minimum crop growth cycle to assess whether there is a minimum period within the year within the crop temperature limits that could allow the crop to grow. 
-2. Use the maximum crop growth cycle to assess whether there is a period that could allow the crop to get sufficient water.
+2. Use the maximum crop growth cycle to assess whether there is a period that could allow the crop to get sufficient water. Trials have shown that using either the maximum crop growth cycle to assess temperature or the minimum crop growth cycle to assess rainfall leads to the exclusion of unrealistic areas (e.g. excluding maize from most of Europe).
 
-Trials have shown that using either the maximum crop growth cycle to assess temperature or the minimum crop growth cycle to assess rainfall leads to the exclusion of unrealistic areas (e.g. excluding maize from most of Europe).
+The base ecocrop predictions have some aspects that also look wrong for example they too predict that maize will not grow in Europe. This is also the problem that Nicole had making predictions far into the future, the ecocrop method of using the mean growing cycle to find time periods without low temperatures was excluding moderately northern latitudes.
 
-The base ecocrop predictions have some aspects that look wrong for example also predicting that maize will not grow in Europe. [show map & refer to potato]
+The proposed new method predicts that a greater proportion of land is potentially suitable. Indeed it may suggest that too much land is suitable, for example looking at maize predictions in Northern latitudes. However I can't think of another way of mechanistically excluding these areas using the ecocrop data.
 
+
+As a part of developing this I've developed a series of R functions enabling better access to the ecocrop database and for comparing predictions. I can document these further when we are agreed on the best method to use.
+
+For now I'm keen to establish whether this simpler method is more useful to apply to Nicoles model runs.
+
+
+```{r, eval=TRUE, echo=FALSE}
+
+# new simpler method for predicting suitability 
+
+#cropnames <- c('maize','wheat','rice','potato','soya bean','sugarcane')
+#beware underscore in soya_bean
+cropnames <- c('maize','rice','wheat','soya_bean')
+#using cr_suit_simpler
+
+
+#todo create a dataframe to store results that I can then use
+#to output a table
+
+for( crop in cropnames)
+{
+
+  obs <- subset(st,paste0(crop,'_mirca'))
+  
+  
+  #compare suitsimp to Mirca
+  pred <- subset(st,paste0(crop,'_suitsimp'))
+    
+  tpos_s <- true_pos(obs,pred)
+  
+  #compare ecocrop to Mirca
+  pred <- subset(st,paste0(crop,'_ecocrop'))
+  
+  tpos_e <- true_pos(obs,pred)
+  
+  cat(paste(crop, 'simp:', tpos_s, 'ecocrop:', tpos_e, '\n\n' ))
+  
+}
+
+
+```
 
