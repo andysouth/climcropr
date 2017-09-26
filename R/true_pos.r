@@ -1,5 +1,14 @@
-
-#example
+#' true_pos simple method to calculate true positive rate between an observed and predicted raster
+#'
+#' @param obs raster of observed values
+#' @param pred raster of predicted values
+#'
+#' @return true positive rate between 0 & 1
+#' @export
+#' @examples
+#' obs <- subset(st,paste0(crop,'_mirca'))
+#' pred <- subset(st,paste0(crop,'_suitsimp'))
+#' tpos_s <- true_pos(obs=obs, pred=pred)
 
 true_pos <- function(obs, pred) {
 

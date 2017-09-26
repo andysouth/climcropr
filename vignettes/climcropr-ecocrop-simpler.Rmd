@@ -21,7 +21,7 @@ library(stringr)
 # library(forcats)
 # library(sp) #for maps
 # library(tmap) #for maps
-# library(knitr) #for tables with kable
+library(knitr) #for tables with kable
 library(climcropr)
 library(raster)
 library(rnaturalearth) #for maps
@@ -96,27 +96,33 @@ cropnames <- c('maize','rice','wheat','soya_bean')
 
 #todo create a dataframe to store results that I can then use
 #to output a table
-
+dfres <- data.frame( crop=cropnames,
+                     simple_true_positive=NA,
+                     ecocrop_true_positive=NA)
+cropnum <- 0
 for( crop in cropnames)
 {
-
+  cropnum <- cropnum +1
+   
+  # this uses st, a raster stack stored in the package containing crop predictions & mirca data
   obs <- subset(st,paste0(crop,'_mirca'))
-  
   
   #compare suitsimp to Mirca
   pred <- subset(st,paste0(crop,'_suitsimp'))
     
   tpos_s <- true_pos(obs,pred)
+  dfres$simple_true_positive[cropnum] <- signif(tpos_s,2)
   
   #compare ecocrop to Mirca
   pred <- subset(st,paste0(crop,'_ecocrop'))
   
   tpos_e <- true_pos(obs,pred)
+  dfres$ecocrop_true_positive[cropnum] <- signif(tpos_e,2) 
   
-  cat(paste(crop, 'simp:', tpos_s, 'ecocrop:', tpos_e, '\n\n' ))
+  #cat(paste(crop, 'simp:', tpos_s, 'ecocrop:', tpos_e, '\n\n' ))
   
 }
 
-
+kable(dfres)
 ```
 

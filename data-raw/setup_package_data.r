@@ -124,8 +124,8 @@ devtools::use_data(soya_bean_ecocrop)
 folder <- 'C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\'
 # mirca codes maize(2), wheat (1), rice (3), soybean (8)
 maize_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop02_ha_30mn.asc.gz')))
-rice_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop01_ha_30mn.asc.gz')))
-wheat_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop03_ha_30mn.asc.gz')))
+rice_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop03_ha_30mn.asc.gz')))
+wheat_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop01_ha_30mn.asc.gz')))
 soya_bean_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop08_ha_30mn.asc.gz')))
 
 devtools::use_data(maize_mirca)
@@ -152,5 +152,5 @@ names(sts) <- c('soya_bean_suitsimp', 'soya_bean_ecocrop', 'soya_bean_mirca')
 
 st <- raster::stack(stm, str, stw, sts)
 
-devtools::use_data(st)
+devtools::use_data(st, overwrite = TRUE)
 

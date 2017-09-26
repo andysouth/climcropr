@@ -4,7 +4,7 @@
 \alias{get_ecocrop}
 \title{get_ecocrop}
 \usage{
-get_ecocrop(cropname, field = NULL)
+get_ecocrop(cropname, ecocrop_object = FALSE, field = NULL)
 }
 \arguments{
 \item{cropname}{an ecocrop cropname}

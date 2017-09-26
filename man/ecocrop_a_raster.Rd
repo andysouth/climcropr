@@ -45,4 +45,8 @@ plot(rast_potato_suit2)
 #rast_potato_suit <- ecocrop_a_raster('potato',st_clim)
 #st_potato_suit <- ecocrop_a_raster('potato',st_clim, simpler=TRUE, diagnostic=TRUE)
 #st_maize_suit <- ecocrop_a_raster('maize',st_clim, simpler=TRUE, diagnostic=TRUE)
+#subset climate data to make faster run, here testing simpler method on maize
+#st_clim2 <- raster::crop(st_clim, extent(-10,10,0,60))
+#rast_maize_suit2 <- ecocrop_a_raster('maize',st_clim2,simpler=TRUE, diagnostic=FALSE)
+#rast_potato_suit <- ecocrop_a_raster('potato',st_clim,simpler=TRUE, diagnostic=FALSE)
 }
