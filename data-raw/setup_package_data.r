@@ -21,10 +21,10 @@ df_ecocrop <- df_ecocrop %>%
   mutate(NAME= stringr::str_split(COMNAME, ",", simplify=TRUE)[1])
 
 
-# df_crop is the list of Mirca cropnames and codes
-# do we need it in here ?
-
-
+# read in list of Mirca names and equiv ecocrop names
+file_path <- system.file("extdata/", "mirca_list.csv", package = "climcropr")
+df_mirca <- read_csv(file_path)
+#devtools::use_data(df_mirca, overwrite=TRUE)
 
 ## soil ph data
 # from https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=546

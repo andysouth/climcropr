@@ -6,7 +6,7 @@
 #' \url{https://www.uni-frankfurt.de/45218023/MIRCA} for more detailed
 #' information on these data.
 #'
-#' @param cropname a MIRCA2000 crop name, see \code{\link{df_crop}} for a full
+#' @param cropname a MIRCA2000 crop name, see \code{\link{df_mirca}} for a full
 #' list. Fuzzy string matching via \code{base::agrep} is done.
 #' @param rainfed default=TRUE, FALSE for irrigated
 #' @param plot default=TRUE, plot the resulting raster
@@ -67,7 +67,7 @@ get_mirca <- function(cropname,
   if (missing(cropname)) {
     stop(
       "\nYou have not provided a valid cropname from the MIRCA2000
-      database to download. Please use 'climcropr::df_crop' to see a list.\n"
+      database to download. Please use 'climcropr::df_mirca' to see a list.\n"
     )
   }
 
@@ -77,17 +77,17 @@ get_mirca <- function(cropname,
   # If there's an exact match, use it; else, attempt partial match,
   # from bomrang, written by @hughparsonage GitHub
 
-  if (toupper(cropname) %in% toupper(df_crop[["name"]])) {
+  if (toupper(cropname) %in% toupper(df_mirca[["mirca_name"]])) {
     cropcode <-
-      df_crop$code[toupper(cropname) == toupper(df_crop$name)]
+      df_mirca$mirca_code[toupper(cropname) == toupper(df_mirca$mirca_name)]
 
   } else {
     likely_crops <- agrep(pattern = cropname,
-                          x = df_crop[["name"]],
+                          x = df_mirca[["mirca_name"]],
                           value = TRUE)
 
     if (length(likely_crops) == 0) {
-      stop("\nNo crops found, please see the 'climcropr::df_crop'",
+      stop("\nNo crops found, please see the 'climcropr::df_mirca'",
             "data frame for a list.\n")
     }
 
