@@ -25,6 +25,7 @@ library(knitr) #for tables with kable
 library(climcropr)
 library(raster)
 library(rnaturalearth) #for maps
+library(tmap) # for maps
 library(dismo) #for ecocrop
 
 # extent object for use in plots
@@ -200,6 +201,54 @@ Grey in the suitability maps represents 0 suitability. I think that the fact tha
 
 ```
 
+The new simpler method is quantitatively better than ecocrop when compared to Mirca, but still has large differences from Mirca.
+```{r, eval=TRUE, echo=FALSE, warnings=FALSE, fig.height=2.6, fig.width=6}
+#fig.height reduced to try to get 3 plots on a page
+
+  #beware underscore in soya_bean
+  cropnames <- c('maize','rice','wheat','soya_bean')
+
+  #this doesn't currently help with plotting maps & chops off some of predictions
+  #bbox <- raster::extent(-180,180,-40,75)
+  bbox <- raster::extent(-180,180,-50,80)
+
+  cropnum <- 0
+  for( crop in cropnames)
+  {
+    cropnum <- cropnum +1
+    
+    # the mirca data has zeroes in the ocean
+    # I can replace 0 with NA for plotting
+    # this might influence the false negative testing
+
+    # mirca
+    rst_mirca <- raster::subset(st,paste0(crop,'_mirca'))
+    # for 0/1 plots but beware of effect on calculations
+    rst_mirca[rst_mirca >0] <- 1 
+    
+    # simple suit
+    rst_base <- raster::subset(st,paste0(crop,'_suitsimp')) 
+    
+    rst_change <- rst_base - rst_mirca
+
+    tm <- tm_shape(rst_change) +
+      tm_raster(style='cat',
+                palette = c('red4','grey95','green4'),
+                labels = c('mirca only','same','baseline only'),
+                title = 'suitability change') +
+      tm_shape(ne_countries()) +
+        tm_borders(col='grey') +
+      tm_layout(legend.position = c("left","bottom"), main.title=paste0(crop,' baseline - mirca'), main.title.size=1)
+    
+    print(tm)  
+    
+    
+    
+  }
+
+```
+
+
 The utility of having simple 0/1 predictions is that it is also clearer to compare predicted change against a baseline. Calculating future - baseline gives you +1 for areas expected to gain the ability to support a crop and -1 for areas expected to lose the ability to support a crop. These can be displayed as in the map below.
 
 ```{r, eval=TRUE, echo=FALSE, warnings=FALSE, fig.height=2.6, fig.width=6}
@@ -207,17 +256,14 @@ The utility of having simple 0/1 predictions is that it is also clearer to compa
 maize_change <- maize_future - subset(st,"maize_suitsimp")
 #plot(maize_change)
 
-#not sure why I can't get country borders to appear on here, but may not want them anyway
-#may be a CRS issue ?
 
 library(tmap)
-data(World)
 tm_shape(maize_change) +
   tm_raster(style='cat',
             palette = c('red4','grey95','green4'),
             labels = c('loss','same','gain'),
             title = 'suitability change') +
-  tm_shape(World) +
+  tm_shape(ne_countries()) +
     tm_borders(col='black') +
   tm_layout(legend.position = c("left","bottom"))
 
