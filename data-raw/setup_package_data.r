@@ -21,6 +21,11 @@ df_ecocrop <- df_ecocrop %>%
   mutate(NAME= stringr::str_split(COMNAME, ",", simplify=TRUE)[1])
 
 
+# df_crop is the list of Mirca cropnames and codes
+# do we need it in here ?
+
+
+
 ## soil ph data
 # from https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=546
 # total available water capacity (mm water per 1 m soil depth),
@@ -134,23 +139,23 @@ devtools::use_data(wheat_mirca)
 devtools::use_data(soya_bean_mirca)
 
 # stack all rasters into a single file (? or one file per crop)
-stm <- raster::stack( maize_suitsimp, maize_ecocrop, maize_mirca )
+stma <- raster::stack( maize_suitsimp, maize_ecocrop, maize_mirca )
 # must be a better way of naming these
 names(stm) <- c('maize_suitsimp', 'maize_ecocrop', 'maize_mirca')
 
-str <- raster::stack( rice_suitsimp, rice_ecocrop, rice_mirca )
+stri <- raster::stack( rice_suitsimp, rice_ecocrop, rice_mirca )
 # must be a better way of naming these
 names(str) <- c('rice_suitsimp', 'rice_ecocrop', 'rice_mirca')
 
-stw <- raster::stack( wheat_suitsimp, wheat_ecocrop, wheat_mirca )
+stwh <- raster::stack( wheat_suitsimp, wheat_ecocrop, wheat_mirca )
 # must be a better way of naming these
 names(stw) <- c('wheat_suitsimp', 'wheat_ecocrop', 'wheat_mirca')
 
-sts <- raster::stack( soya_bean_suitsimp, soya_bean_ecocrop, soya_bean_mirca )
+stso <- raster::stack( soya_bean_suitsimp, soya_bean_ecocrop, soya_bean_mirca )
 # must be a better way of naming these
 names(sts) <- c('soya_bean_suitsimp', 'soya_bean_ecocrop', 'soya_bean_mirca')
 
-st <- raster::stack(stm, str, stw, sts)
+st <- raster::stack(stma, stri, stwh, stso)
 
 devtools::use_data(st, overwrite = TRUE)
 
