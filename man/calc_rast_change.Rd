@@ -3,7 +3,8 @@
 \name{calc_rast_change}
 \alias{calc_rast_change}
 \title{calc_rast_change
- calculating maps of change, future-present is what we want, gain=1, loss=-1.}
+calculating maps of change, future-present is what we want, gain=1, loss=-1.
+this function not really necessary can just do simple subtraction}
 \usage{
 calc_rast_change(now, fut)
 }
