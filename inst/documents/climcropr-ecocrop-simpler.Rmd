@@ -94,6 +94,59 @@ for( crop in cropnames)
 kable(dfres)
 ```
 
+```{r, eval=TRUE, echo=FALSE}
+
+# testing tmax method against simpsuit and ecocrop
+# based on files held in memory and saved as Rds
+# so eval=FALSE for now
+st_tmax <- readRDS('C:\\Dropbox\\ueaHelix2017\\ecocrop\\andy_code\\st_tmax.Rds')
+
+#cropnames <- c('maize','wheat','rice','potato','soya bean','sugarcane')
+#beware underscore in soya_bean
+cropnames <- c('maize','rice','wheat','soya_bean','sorghum')
+
+#dataframe to store results to output a table
+dfres <- data.frame( crop=cropnames,
+                     simple_true_positive=NA,
+                     tmax_true_positive=NA,                     
+                     ecocrop_true_positive=NA)
+
+cropnum <- 0
+for( crop in cropnames)
+{
+  cropnum <- cropnum +1
+   
+  # this uses st, a raster stack stored in the package containing crop predictions & mirca data
+  obs <- subset(st,paste0(crop,'_mirca'))
+  
+  #tpos suitsimp to Mirca
+  pred <- subset(st,paste0(crop,'_suitsimp'))
+  tpos_s <- true_pos(obs,pred)
+  dfres$simple_true_positive[cropnum] <- signif(tpos_s,2)
+  
+  #tpos tmax to Mirca
+  #currently stored in different place
+  pred <- subset(st_tmax,paste0(crop,'_tmax'))
+  tpos_s <- true_pos(obs,pred)
+  dfres$tmax_true_positive[cropnum] <- signif(tpos_s,2)
+  
+  #tpos ecocrop to Mirca
+  pred <- subset(st,paste0(crop,'_ecocrop'))
+  tpos_e <- true_pos(obs,pred)
+  dfres$ecocrop_true_positive[cropnum] <- signif(tpos_e,2) 
+  
+  
+  
+  
+  #dfres$ecocrop_true_negative[cropnum] <- signif(true_neg(obs,pred),2) 
+  
+  #cat(paste(crop, 'simp:', tpos_s, 'ecocrop:', tpos_e, '\n\n' ))
+  
+}
+
+kable(dfres)
+```
+
 ##### Table 2 : The new simpler method has a slightly poorer true negative rate (specificity) than ecocrop for rainfed crops. However the true negative rate is not such a good test because we expect that other factors (e.g. such as history and economy) contribute to crops not being grown in areas that have a suitable climate.
 ```{r, eval=TRUE, echo=FALSE}
 
@@ -119,14 +172,12 @@ for( crop in cropnames)
   # this uses st, a raster stack stored in the package containing crop predictions & mirca data
   obs <- subset(st,paste0(crop,'_mirca'))
   
-  #compare suitsimp to Mirca
+  #tneg suitsimp to Mirca
   pred <- subset(st,paste0(crop,'_suitsimp'))
-  
   dfres$simple_true_negative[cropnum] <- signif(true_neg(obs,pred),2)  
   
-  #compare ecocrop to Mirca
+  #tneg ecocrop to Mirca
   pred <- subset(st,paste0(crop,'_ecocrop'))
-  
   dfres$ecocrop_true_negative[cropnum] <- signif(true_neg(obs,pred),2) 
   
 }
@@ -266,6 +317,60 @@ tm_shape(maize_change) +
   tm_shape(ne_countries()) +
     tm_borders(col='black') +
   tm_layout(legend.position = c("left","bottom"))
+
+```
+
+
+### comparing using maximum rather than mean temp climate data 
+### to assess simple suitability
+```{r, eval=FALSE, echo=FALSE, fig.height=2.6, fig.width=6}
+
+sorghum_tmax <- ecocrop_a_raster('broom-corn',st_clim, simpler=TRUE, use_tmax=TRUE)
+
+#test this against both tavg and Mirca
+crop <- 'sorghum'
+sorghum_tavg <- raster::subset(st,paste0(crop,'_suitsimp')) 
+sorghum_mir <- raster::subset(st,paste0(crop,'_mirca'))
+
+# this showed no difference at current temperatures
+plot(sorghum_tmax-sorghum_tavg)
+summary(sorghum_tmax-sorghum_tavg)
+
+# but sorghum max is 40 degrees and min growth cycle is 3 months
+# as Jeff said rainfall probably already excludes any areas that have >40 degrees for 3 months
+
+# potato max is 30 degrees, does it have a difference ?
+potato_tmax <- ecocrop_a_raster('potato',st_clim, simpler=TRUE, use_tmax=TRUE)
+crop <- 'potato'
+potato_tavg <- ecocrop_a_raster('potato',st_clim, simpler=TRUE, use_tmax=FALSE) 
+#potato_mir <- raster::subset(st,paste0(crop,'_mirca'))
+
+#aha good !
+plot(potato_tavg-potato_tmax)
+
+#compare to Mirca
+folder <- 'C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\'
+potato_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop10_ha_30mn.asc.gz')))
+
+#Jeff said tmax looking better, even though it does decrease the truepos rate
+#but said for a paper I would then need to defend not using 
+#tmin rather than tavg for min temps
+
+#BUT is tmax better than base ecocrop for our 4 crops ?
+
+true_pos(potato_mirca,potato_tmax)
+#[1] 0.6304388
+true_pos(potato_mirca,potato_tavg)
+#[1] 0.7948575
+true_neg(potato_mirca,potato_tmax)
+#[1] 0.1350915
+true_neg(potato_mirca,potato_tavg)
+#[1] 0.1129034
+plot(potato_mirca>0)
+plot((potato_mirca>0)-potato_tmax)
+plot(potato_tmax)
+plot(potato_mirca>0))
+
 
 ```
 

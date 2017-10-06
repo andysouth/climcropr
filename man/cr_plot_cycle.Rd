@@ -16,7 +16,7 @@ ggplot2 object
 for a single or vector of crops
 }
 \examples{
-cropnames <- c('maize','rice','potato','soya bean','sugarcane')
+cropnames <- c('broom-corn','maize','rice','potato','soya bean','sugarcane')
 cr_plot_cycle(cropnames)
 cr_plot_cycle(c('asparagus','maize','celery','rape','cabbage'))
 }

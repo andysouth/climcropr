@@ -1,17 +1,15 @@
-#' cr_suit_simpler a simpler suitability function
-#' use crop@GMIN / 30 as minimum months of crop cycle needed
-#' temp_suit : min cycle consecutive months where tavg is within crop@TMIN, crop@TMAX (not opt)
+#' cr_suit_simpler a simpler than ecocrop suitability function along similar lines
+#'
+#' uses crop@GMIN / 30 as minimum months of crop cycle needed
+#' temp_suit : min cycle consecutive months where tavg is within crop@TMIN, crop@TMAX
 #' kill_temp : tmin-5 > crop@KTMP
 #' precip : total precip within growing cycle should be within crop@RMIN, crop@RMAX
-#' beware that temp & precip have to be suitable at same time !
-#' perhaps I can use movingFun to estimate whether each starting month is suitable ?
-#' cr_plot_cycle plot length of crop cycle from ecocrop database
 #'
 #' @param crop an ecocrop cropname or object
 #' @param tmin monthly tmin for a site
 #' @param tavg monthly tavg for a site
 #' @param use_tmax option to use tmax rather than tavg
-#' @param tmax monthly tavg for a site
+#' @param tmax monthly tmax for a site
 #' @param prec monthly precipitation for a site
 #' @param rainfed FALSE for irrigated
 #'

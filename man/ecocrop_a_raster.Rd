@@ -5,8 +5,8 @@
 \title{ecocrop_a_raster}
 \usage{
 ecocrop_a_raster(crop, st_clim_all = NULL, st_tmin = NULL, st_tavg = NULL,
-  st_prec = NULL, rainfed = TRUE, filename = NULL, plot = TRUE,
-  simpler = TRUE, diagnostic = TRUE, ...)
+  use_tmax = FALSE, st_tmax = NULL, st_prec = NULL, rainfed = TRUE,
+  filename = NULL, plot = TRUE, simpler = TRUE, diagnostic = FALSE, ...)
 }
 \arguments{
 \item{crop}{the crop either a name or ecocrop object}

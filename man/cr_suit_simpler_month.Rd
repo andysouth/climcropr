@@ -4,7 +4,7 @@
 \alias{cr_suit_simpler_month}
 \title{cr_suit_simpler_month}
 \usage{
-cr_suit_simpler_month(crop, tmin, tavg, prec, rainfed)
+cr_suit_simpler_month(crop, tmin, tavg, use_tmax, tmax, prec, rainfed)
 }
 \arguments{
 \item{crop}{an ecocrop cropname or object}

@@ -108,6 +108,19 @@ wheat_suitsimp <- ecocrop_a_raster('wheat', st_clim, simpler=TRUE, rainfed=TRUE,
 soya_bean_suitsimp <- ecocrop_a_raster('soya bean', st_clim, simpler=TRUE, rainfed=TRUE, diagnostic=FALSE)
 sorghum_suitsimp <- ecocrop_a_raster('broom-corn', st_clim, simpler=TRUE, rainfed=TRUE, diagnostic=FALSE)
 
+#trying with tmax
+maize_tmax <- ecocrop_a_raster('maize', st_clim, simpler=TRUE, use_tmax=TRUE)
+rice_tmax <- ecocrop_a_raster('rice', st_clim, simpler=TRUE, use_tmax=TRUE)
+wheat_tmax <- ecocrop_a_raster('wheat', st_clim, simpler=TRUE, use_tmax=TRUE)
+soya_bean_tmax <- ecocrop_a_raster('soya bean', st_clim, simpler=TRUE, use_tmax=TRUE)
+sorghum_tmax <- ecocrop_a_raster('broom-corn', st_clim, simpler=TRUE, use_tmax=TRUE)
+
+#save these to a raster stack, in case I need to use again
+st_tmax <- raster::stack( maize_tmax, rice_tmax, wheat_tmax, soya_bean_tmax, sorghum_tmax)
+# must be a better way of naming these
+names(st_tmax) <- c('maize_tmax', 'rice_tmax', 'wheat_tmax', 'soya_bean_tmax', 'sorghum_tmax')
+
+saveRDS(st_tmax, file='C:\\Dropbox\\ueaHelix2017\\ecocrop\\andy_code\\st_tmax.Rds')
 
 # devtools::use_data(maize_suitsimp)
 # devtools::use_data(rice_suitsimp)
@@ -133,13 +146,14 @@ sorghum_ecocrop <- ecocrop_a_raster('broom-corn', st_clim, simpler=FALSE, rainfe
 # get_mirca not currently working
 # temporary solution to read into package
 folder <- 'C:\\Dropbox\\ueaHelix2017\\MIRCA\\_half_degree\\'
-# mirca codes maize(2), wheat (1), rice (3), soybean (8)
+# mirca codes maize(2), wheat (1), rice (3), soybean (8), potato(10)
 maize_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop02_ha_30mn.asc.gz')))
 rice_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop03_ha_30mn.asc.gz')))
 wheat_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop01_ha_30mn.asc.gz')))
 soya_bean_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop08_ha_30mn.asc.gz')))
 sorghum_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop07_ha_30mn.asc.gz')))
 
+potato_mirca <- raster(SDMTools::read.asc.gz(paste0(folder,'annual_area_harvested_rfc_crop10_ha_30mn.asc.gz')))
 
 
 # stack all rasters into a single file (? or one file per crop)

@@ -2,25 +2,23 @@
 % Please edit documentation in R/cr_suit_simpler.R
 \name{cr_suit_simpler}
 \alias{cr_suit_simpler}
-\title{cr_suit_simpler a simpler suitability function
-use crop@GMIN / 30 as minimum months of crop cycle needed
-temp_suit : min cycle consecutive months where tavg is within crop@TMIN, crop@TMAX (not opt)
-kill_temp : tmin-5 > crop@KTMP
-precip : total precip within growing cycle should be within crop@RMIN, crop@RMAX
-beware that temp & precip have to be suitable at same time !
-perhaps I can use movingFun to estimate whether each starting month is suitable ?
-cr_plot_cycle plot length of crop cycle from ecocrop database}
+\title{cr_suit_simpler a simpler than ecocrop suitability function along similar lines}
 \usage{
-cr_suit_simpler(crop, tmin, tavg, prec, rainfed)
+cr_suit_simpler(crop, tmin, tavg, use_tmax = FALSE, tmax = NULL, prec,
+  rainfed)
 }
 \arguments{
 \item{crop}{an ecocrop cropname or object}
 
-\item{tmin}{single tmin value for a site}
+\item{tmin}{monthly tmin for a site}
 
-\item{tavg}{single tavg value for a site}
+\item{tavg}{monthly tavg for a site}
 
-\item{prec}{single precipitation value for a site}
+\item{use_tmax}{option to use tmax rather than tavg}
+
+\item{tmax}{monthly tmax for a site}
+
+\item{prec}{monthly precipitation for a site}
 
 \item{rainfed}{FALSE for irrigated}
 }
@@ -28,14 +26,10 @@ cr_suit_simpler(crop, tmin, tavg, prec, rainfed)
 1/0 for suitable/unsuitable
 }
 \description{
-cr_suit_simpler a simpler suitability function
-use crop@GMIN / 30 as minimum months of crop cycle needed
-temp_suit : min cycle consecutive months where tavg is within crop@TMIN, crop@TMAX (not opt)
+uses crop@GMIN / 30 as minimum months of crop cycle needed
+temp_suit : min cycle consecutive months where tavg is within crop@TMIN, crop@TMAX
 kill_temp : tmin-5 > crop@KTMP
 precip : total precip within growing cycle should be within crop@RMIN, crop@RMAX
-beware that temp & precip have to be suitable at same time !
-perhaps I can use movingFun to estimate whether each starting month is suitable ?
-cr_plot_cycle plot length of crop cycle from ecocrop database
 }
 \examples{
 crop <- getCrop('potato')
