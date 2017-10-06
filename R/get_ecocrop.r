@@ -27,9 +27,8 @@ get_ecocrop <- function(cropname,
 
   data("df_ecocrop")
 
-  #TODO add some warning about if crop not present
   #TODO add some warning about if field not present
-  #TODO can I vectorise to work on a vector of crops
+  #TODO vectorise to work on a vector of crops
 
   # checking if the cropname appears as the first word in the COMNAME field
 
@@ -38,6 +37,8 @@ get_ecocrop <- function(cropname,
 
   #case insensitive
   out <- dplyr::filter( df_ecocrop, str_detect(COMNAME, regex(paste0("^",cropname,","), ignore_case = TRUE)))
+
+  if (nrow(out)==0) stop('crop ',cropname,' not found, check df_ecocrop$NAME')
 
   # do I want to offer option to return as an ecocrop object ?
   # e.g. to use within ecocrop_a_raster ??
