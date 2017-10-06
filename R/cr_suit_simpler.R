@@ -8,9 +8,11 @@
 #' cr_plot_cycle plot length of crop cycle from ecocrop database
 #'
 #' @param crop an ecocrop cropname or object
-#' @param tmin single tmin value for a site
-#' @param tavg single tavg value for a site
-#' @param prec single precipitation value for a site
+#' @param tmin monthly tmin for a site
+#' @param tavg monthly tavg for a site
+#' @param use_tmax option to use tmax rather than tavg
+#' @param tmax monthly tavg for a site
+#' @param prec monthly precipitation for a site
 #' @param rainfed FALSE for irrigated
 #'
 #' @return 1/0 for suitable/unsuitable
@@ -19,9 +21,21 @@
 #' crop <- getCrop('potato')
 #' cr_suit_simpler(crop, 5:16, 15:26, runif(12)*100, rainfed=TRUE)
 
-cr_suit_simpler <- function(crop, tmin, tavg, prec, rainfed) {
+cr_suit_simpler <- function(crop,
+                            tmin,
+                            tavg,
+                            use_tmax = FALSE,
+                            tmax = NULL,
+                            prec,
+                            rainfed) {
 
-  dfmonthsuit <- cr_suit_simpler_month(crop, tmin, tavg, prec, rainfed)
+  dfmonthsuit <- cr_suit_simpler_month(crop=crop,
+                                       tmin=tmin,
+                                       tavg=tavg,
+                                       use_tmax = use_tmax,
+                                       tmax = tmax,
+                                       prec=prec,
+                                       rainfed=rainfed)
 
   # If any months in the year are suitable then that area is suitable.
   # can return max of the monthly suitabilities
@@ -49,7 +63,13 @@ cr_suit_simpler <- function(crop, tmin, tavg, prec, rainfed) {
 #' crop <- getCrop('potato')
 #' cr_suit_simpler_month(crop, 5:16, 15:26, runif(12)*100, rainfed=TRUE)
 #'
-cr_suit_simpler_month <- function(crop, tmin, tavg, prec, rainfed) {
+cr_suit_simpler_month <- function(crop,
+                                  tmin,
+                                  tavg,
+                                  use_tmax,
+                                  tmax,
+                                  prec,
+                                  rainfed) {
 
   # use crop@GMIN / 30 as minimum months of crop cycle needed
   # note that this round both up and down
@@ -90,7 +110,10 @@ cr_suit_simpler_month <- function(crop, tmin, tavg, prec, rainfed) {
   # 1) is tavg within TMIN & TMAX for duration months after each start month
   #first calc monthly tmin & tmax suit
   m_tmin_suit <- ifelse(tavg >= crop@TMIN, 1, 0)
-  m_tmax_suit <- ifelse(tavg <= crop@TMAX, 1, 0)
+
+  #NEW option to use tmax from clim data
+  if (use_tmax) m_tmax_suit <- ifelse(tmax <= crop@TMAX, 1, 0)
+  else          m_tmax_suit <- ifelse(tavg <= crop@TMAX, 1, 0)
   #or can do both at same time
   #m_temp_suit <- ifelse(tavg >= crop@TMIN & tavg <= crop@TMAX, 1, 0)
 
