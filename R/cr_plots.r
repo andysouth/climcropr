@@ -29,6 +29,17 @@ cr_plot_cycle <- function(cropnames=c('maize','rice'))
     theme_minimal()
 }
 
+#' cr_plot_temp plot crop temperature limits from ecocrop database
+#'
+#' for a single or vector of crops
+#'
+#' @param cropnames name or vector of crop names
+#'
+#' @return ggplot2 object
+#' @export
+#' @examples
+#' cropnames <- c('broom-corn','maize','rice','potato','soya bean','sugarcane')
+#' cr_plot_temp(cropnames)
 
 cr_plot_temp <- function(cropnames=c('maize','rice'))
 {
@@ -46,6 +57,18 @@ cr_plot_temp <- function(cropnames=c('maize','rice'))
     ylim(0,NA) +
     theme_minimal()
 }
+
+#' cr_plot_precip plot crop precipitation limits from ecocrop database
+#'
+#' for a single or vector of crops
+#'
+#' @param cropnames name or vector of crop names
+#'
+#' @return ggplot2 object
+#' @export
+#' @examples
+#' cropnames <- c('broom-corn','maize','rice','potato','soya bean','sugarcane')
+#' cr_plot_precip(cropnames)
 
 cr_plot_precip <- function(cropnames=c('maize','rice'))
 {

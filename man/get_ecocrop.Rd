@@ -15,7 +15,7 @@ get_ecocrop(cropname, ecocrop_object = FALSE, field = NULL)
 get new ecocrop entry for a crop
 }
 \details{
-data scraped from FAO website 2017
+data scraped from FAO website 2017, see scraping script in data-raw/21_ExtractEcoCropSheets.R
 }
 \examples{
 potato <- get_ecocrop('potato')

@@ -52,6 +52,8 @@ cr_suit_simpler <- function(crop,
 #' @param crop an ecocrop cropname or object
 #' @param tmin single tmin value for a site
 #' @param tavg single tavg value for a site
+#' @param use_tmax option to use tmax rather than tavg
+#' @param tmax monthly tmax for a site
 #' @param prec single precipitation value for a site
 #' @param rainfed FALSE for irrigated
 #'

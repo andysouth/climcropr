@@ -49,4 +49,6 @@ plot(rast_potato_suit2)
 #st_clim2 <- raster::crop(st_clim, extent(-10,10,0,60))
 #rast_maize_suit2 <- ecocrop_a_raster('maize',st_clim2,simpler=TRUE, diagnostic=FALSE)
 #rast_potato_suit <- ecocrop_a_raster('potato',st_clim,simpler=TRUE, diagnostic=FALSE)
+#to use climate tmax rather than tavg
+#wheat_tmax <- ecocrop_a_raster('wheat', st_clim2, simpler=TRUE, use_tmax=TRUE)
 }

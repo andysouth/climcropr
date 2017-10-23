@@ -2,7 +2,7 @@
 #'
 #' get new ecocrop entry for a crop
 #'
-#' data scraped from FAO website 2017
+#' data scraped from FAO website 2017, see scraping script in data-raw/21_ExtractEcoCropSheets.R
 #'
 #' @param cropname an ecocrop cropname
 #' @param field a filed to select

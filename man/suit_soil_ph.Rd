@@ -10,6 +10,14 @@ suit_soil_ph(cropname, phmin = NULL, phmax = NULL, phopmn = NULL,
 \arguments{
 \item{cropname}{name of the crop}
 
+\item{phmin}{min ph from ecocrop}
+
+\item{phmax}{max ph from ecocrop}
+
+\item{phopmn}{min optimal ph from ecocrop}
+
+\item{phopmx}{max optimal ph from ecocrop}
+
 \item{suit_or_opt}{'suit', 'opt', 'suit1_opt2'}
 
 \item{filename}{optional output file}
@@ -18,11 +26,12 @@ suit_soil_ph(cropname, phmin = NULL, phmax = NULL, phopmn = NULL,
 }
 \description{
 generate a global suitability (0/1) raster for a crop based on it's ph limits from ecocrop
-and harmonised world soil database data at 0.05 degree resolution
+and regridded harmonised world soil database v1.2 at 0.05 degree resolution
 }
 \details{
-TODO offer option to pass ph limits as args rather than getting from ecocrop
-TODO offer option to use optimal rather than absolute ph limits from ecocrop
+Wieder, W.R., J. Boehnert, G.B. Bonan, and M. Langseth. 2014. Regridded Harmonized World Soil Database v1.2.
+Data set. Available on-line [http://daac.ornl.gov] from Oak Ridge National Laboratory Distributed
+Active Archive Center, Oak Ridge, Tennessee, USA. http://dx.doi.org/10.3334/ORNLDAAC/1247.
 }
 \examples{
 #takes a few mins to run

@@ -13,6 +13,10 @@ cr_suit_simpler_month(crop, tmin, tavg, use_tmax, tmax, prec, rainfed)
 
 \item{tavg}{single tavg value for a site}
 
+\item{use_tmax}{option to use tmax rather than tavg}
+
+\item{tmax}{monthly tmax for a site}
+
 \item{prec}{single precipitation value for a site}
 
 \item{rainfed}{FALSE for irrigated}
