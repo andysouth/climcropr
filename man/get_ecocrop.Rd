@@ -4,12 +4,14 @@
 \alias{get_ecocrop}
 \title{get_ecocrop}
 \usage{
-get_ecocrop(cropname, ecocrop_object = FALSE, field = NULL)
+get_ecocrop(cropname, field = NULL, ecocrop_object = FALSE)
 }
 \arguments{
 \item{cropname}{an ecocrop cropname}
 
-\item{field}{a filed to select}
+\item{field}{a field to select from the ecocrop database}
+
+\item{ecocrop_object}{whether to return results as an ecocrop object default FALSE}
 }
 \description{
 get new ecocrop entry for a crop

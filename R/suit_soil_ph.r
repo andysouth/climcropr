@@ -46,18 +46,6 @@ suit_soil_ph <- function(cropname,
   if (filename == '') filename <- rasterTmpFile()
 
   # get min & max ph from ecocrop
-  # old way of offering suit or opt
-  # if (is.null(min_ph))
-  # {
-  #   if (isTRUE(optimal)) min_ph <- get_ecocrop(cropname,'phopmn')
-  #   else min_ph <- get_ecocrop(cropname,'phmin')
-  # }
-  #
-  # if (is.null(max_ph))
-  # {
-  #   if (isTRUE(optimal)) max_ph <- get_ecocrop(cropname,'phopmx')
-  #   else max_ph <- get_ecocrop(cropname,'phmax')
-  # }
 
   if (is.null(phopmn)) phopmn <- get_ecocrop(cropname,'phopmn')
   if (is.null(phopmx)) phopmx <- get_ecocrop(cropname,'phopmx')
@@ -75,6 +63,9 @@ suit_soil_ph <- function(cropname,
    bs <- blockSize(out)
    out <- writeStart(out, filename, overwrite=TRUE)
    for (i in 1:bs$n) {
+
+     message('block',i,' of ',bs$n)
+
      v <- getValues(x, row=bs$row[i], nrows=bs$nrows[i] )
 
      # main line changedfrom f4 in the processing step

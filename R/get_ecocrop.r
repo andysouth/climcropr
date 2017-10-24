@@ -5,7 +5,8 @@
 #' data scraped from FAO website 2017, see scraping script in data-raw/21_ExtractEcoCropSheets.R
 #'
 #' @param cropname an ecocrop cropname
-#' @param field a filed to select
+#' @param field a field to select from the ecocrop database
+#' @param ecocrop_object whether to return results as an ecocrop object default FALSE
 #'
 #' @import dplyr stringr
 #'
@@ -22,8 +23,8 @@
 #' cropnew <- get_ecocrop(cropname)
 
 get_ecocrop <- function(cropname,
-                        ecocrop_object = FALSE,
-                        field = NULL) {
+                        field = NULL,
+                        ecocrop_object = FALSE) {
 
   data("df_ecocrop")
 

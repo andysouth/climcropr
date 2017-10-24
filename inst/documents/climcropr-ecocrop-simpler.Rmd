@@ -34,11 +34,26 @@ ext <- extent(-180,180,-60,80)
 ```
 
 ### Abstract
-A simpler method than the ecocrop model for predicting crop suitability based upon the FAO ecocrop database has been developed. This new simple method produces better true positive rates than the original ecocrop model when tested against MIRCA harvested area data for the year 2000.
+We describe a relatively simple approach for investigating the responses to climate change of the global distributions of hundreds of crops.
 
-The original ecocrop modelling approach has certain details that seem not to be justified by these tests against field data. 
+The large changes predicted in high-end climate scenarios are outside of the tolerances of many existing crops where they are currently grown. Potential adaptation strategies include growing crops in new areas that become suitable under a changed climate and stopping growing in areas that become unsuitable.
 
-The new simpler method simply predicts if an area is suitable or not (0/1), rather than predicting a suitability value between 0 and 1. It aims for a conservative approach, to be able to exclude areas that are unsuitable with some confidence, while being less concerned that some unsuitable areas are classed as suitable.
+There are a wide range of existing approaches for predicting the response of crop distributions to climate change. These differ in whether they are statistical or mechanistic and in the level of detail they include. There is a trade off between this level of detail and the generality of application in terms of numbers of crops and geographic area. Detailed models, e.g. representing the growth of crops daily, have data requirements that  restrict their application to very few crops and to restricted geographic areas. A relatively simple mechanistic approach based upon the temperature and precipitation requirements of hundreds of crops held in the FAO EcoCrop database was developed more than 15 years ago. This modeling approach, also termed EcoCrop, was implemented in both GIS and a package in the statistical language R. A more recent paper describes the application of a modified version of this approach to a single crop, Sorghum. 
+
+The existing ecocrop model has not been applied to a large number of crops at large geographic extents even though the potential to do this is one of the advanatges of it's simplicity.
+
+We describe an even simpler method than the ecocrop model for predicting crop suitability based upon the FAO ecocrop database. This new simple method produces better true positive rates than the original ecocrop model when tested against MIRCA harvested area data for the year 2000.
+
+Some of the details in the original ecocrop modelling approach seem not to be justified by these tests against field data. 
+
+The new simpler method simply predicts if an area is suitable or not (0/1), rather than predicting a suitability value between 0 and 1. It aims for a conservative approach, to be able to exclude areas that are unsuitable with some confidence, while being less concerned that some unsuitable areas are classed as suitable. [todo I'm not sure about that sentence]
+
+This new approach is both simpler, more transparent and more open. We provide a documented R package implementing the method, including methods to test against field data.
+
+~ end of abstract
+
+TODO
+~ I need to justify advantages over a statistical approach (statistical works on where crops are grown not on where they could be grown)
 
 
 ##### Table 1 : The new simpler method has a better true positive rate than ecocrop for rainfed crops. Comparing global predictions for the year 2000 to Mirca.

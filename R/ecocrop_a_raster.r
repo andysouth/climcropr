@@ -106,7 +106,6 @@ ecocrop_a_raster <- function(crop,
   #for each row in the raster
   for (r in 1:nrow(outraster)){
 
-    # andy added
     if (r%%10 == 1) message('row',r,' of ',nrow(outraster))
 
     if (!diagnostic) v[] <- NA

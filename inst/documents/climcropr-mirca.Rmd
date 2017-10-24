@@ -34,7 +34,6 @@ ext <- extent(-180,180,-60,80)
 ### Comparing ecocrop predictions with MIRCA crop maps at 0.5 degree resolution
 
 
-This is a data driven document with hidden code that generates the figures. 
 
 
 ```{r, eval=TRUE, echo=FALSE}
