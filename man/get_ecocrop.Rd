@@ -4,17 +4,27 @@
 \alias{get_ecocrop}
 \title{get_ecocrop}
 \usage{
-get_ecocrop(cropname)
+get_ecocrop(cropname, field = NULL, ecocrop_object = FALSE)
 }
 \arguments{
 \item{cropname}{an ecocrop cropname}
+
+\item{field}{a field to select from the ecocrop database}
+
+\item{ecocrop_object}{whether to return results as an ecocrop object default FALSE}
 }
 \description{
 get new ecocrop entry for a crop
 }
 \details{
-data scraped from FAO website 2017
+data scraped from FAO website 2017, see scraping script in data-raw/21_ExtractEcoCropSheets.R
 }
 \examples{
 potato <- get_ecocrop('potato')
+get_ecocrop('maize','phmin')
+#comparing new & old versions of database
+cropname <- 'maize'
+library(dismo)
+cropold <- dismo::getCrop(cropname)
+cropnew <- get_ecocrop(cropname)
 }

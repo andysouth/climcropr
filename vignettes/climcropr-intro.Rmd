@@ -2,9 +2,9 @@
 title: "climcropr intro"
 author: "Andy South"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+#output: rmarkdown::html_vignette
 #        fig_caption: yes
-# output: pdf_document        
+output: pdf_document        
 vignette: >
   %\VignetteIndexEntry{climcropr intro}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=7)
 # library(sp) #for maps
 # library(tmap) #for maps
 # library(knitr) #for tables with kable
+library(climcropr)
 library(raster)
 library(rnaturalearth) #for maps
 library(dismo) #for ecocrop
@@ -29,7 +30,8 @@ ext <- extent(-180,180,-60,80)
 
 ```
 
-This is a data driven document with hidden code that generates the figures. 
+TODO add in intro to the simpler method and comparison with ecocrop here.
+from documents/climcropr-ecocrop-simpler.Rmd - keep it very brief
 
 To create an ecocrop maximum suitability map for a crop you can use the `ecocrop_a_raster` function.
 
@@ -40,6 +42,14 @@ Currently the options are :
 1. st_clim_all : a raster stack with 36 layers named on01–on12 for min, oa01-oa12 for mean and op01-012 for precip.
 1. st_tmin, st_tavg, st_prec : 3 separate raster stacks of 12 layers each, names don't matter (order does)
 
+Within the climcropr package some example climate data are provided in one of the required formats.
+
+The monthly climate data are provided in a raster stack called st_clim.
+
+These are a 30 year average for the period 1981-2005 (centred on the year 1995) from the UEA CRU TS3.22 Dataset.
+
+Harris, I., Jones, P.D., Osborn, T.J., Lister, D.H., 2014. Updated high-resolution grids of monthly climatic observations - the CRU TS3.10 Dataset: UPDATED HIGH-RESOLUTION GRIDS OF MONTHLY CLIMATIC OBSERVATIONS. International Journal of Climatology 34, 623–642. doi:10.1002/joc.3711
+
 
 ```{r, eval=FALSE, echo=TRUE}
 
@@ -47,260 +57,12 @@ Currently the options are :
 data("st_clim")
 ec_out_sorghum <- ecocrop_a_raster('Sorghum (high altitude)', 
                                    st_clim_all = st_clim, 
-                                   rainfed = TRUE, 
-                                   filename = "test_out",
-                                   overwrite = TRUE )
+                                   rainfed = TRUE )
 
-#separating out tmin, avg, precip etc. from the example input file
-#this is also done within the ecocrop_a_raster() function
-#I've put it here too allow experimenting with replacing tavg with tmax
-    month_nums <- c(paste0('0',1:9),10:12)
-    names_tmin <- paste0('on',month_nums)
-    names_tmax <- paste0('ox',month_nums)
-    names_tavg <- paste0('oa',month_nums)
-    names_prec <- paste0('op',month_nums)
 
-    st_tmin <- raster::subset(st_clim_all, subset=names_tmin)
-    st_tmax <- raster::subset(st_clim_all, subset=names_tmax)
-    st_tavg <- raster::subset(st_clim_all, subset=names_tavg)
-    st_prec <- raster::subset(st_clim_all, subset=names_prec)
 
-# call function using individual raster stacks for monthly tmin, tavg and precip
-# in this case experimenting with using tmax instead of tavg
-ec_out_potato <- ecocrop_a_raster('potato', 
-                                   st_tmin = st_tmin, 
-                                   st_tavg = st_tmax, #BEWARE tavg set from tmax
-                                   st_prec = st_prec, 
-                                   rainfed = TRUE, 
-                                   filename = "test_out2",
-                                   overwrite = TRUE )
 ```
 
 
 
-```{r, eval=FALSE, echo=FALSE, warnings=FALSE, message=FALSE, include=FALSE}
-# val=FALSE above because models take a few minutes to run
-# run the models
 
-#separating out tmin, avg, precip etc. from input file
-#this is also done within the ecocrop_a_raster() function
-#I've put it here too allow experimenting with replacing tavg with tmax
-    month_nums <- c(paste0('0',1:9),10:12)
-    names_tmin <- paste0('on',month_nums)
-    names_tmax <- paste0('ox',month_nums)
-    names_tavg <- paste0('oa',month_nums)
-    names_prec <- paste0('op',month_nums)
-
-    st_tmin <- raster::subset(st_clim_all, subset=names_tmin)
-    st_tmax <- raster::subset(st_clim_all, subset=names_tmax)
-    st_tavg <- raster::subset(st_clim_all, subset=names_tavg)
-    st_prec <- raster::subset(st_clim_all, subset=names_prec)
-
-#sorghum using tavg
-ec_out_sorghum <- ecocrop_a_raster('Sorghum (high altitude)', 
-                                   st_clim_all = st_clim, 
-                                rainfed = TRUE, 
-                                filename = "inst\\extdata\\ec_out_sorghum",
-                                overwrite = TRUE )
-
-#sorghum using tmax
-ec_out_sorghum_max <- ecocrop_a_raster('Sorghum (high altitude)', 
-                                   st_tmin = st_tmin, 
-                                   st_tavg = st_tmax, #BEWARE using tmax for tavg
-                                   #st_tavg = st_tavg, 
-                                   st_prec = st_prec, 
-                                   rainfed = TRUE, 
-                                   filename = "inst\\extdata\\ec_out_sorghum_max",
-                                   overwrite = TRUE )
-
-ec_out_potato <- ecocrop_a_raster('potato', 
-                                   st_clim_all = st_clim, 
-                                   rainfed = TRUE, 
-                                   filename = "inst\\extdata\\ec_out_potato_rain",
-                                   overwrite = TRUE )
-
-#potato using tmax
-ec_out_potato_max <- ecocrop_a_raster('potato', 
-                                       st_tmin = st_tmin, 
-                                       st_tavg = st_tmax, #BEWARE using tmax for tavg
-                                       #st_tavg = st_tavg, 
-                                       st_prec = st_prec, 
-                                       rainfed = TRUE, 
-                                       filename = "inst\\extdata\\ec_out_potato_max",
-                                       overwrite = TRUE )
-
-#sugar beet
-ec_out_beet <- ecocrop_a_raster('sugar beet', 
-                                  st_clim_all = st_clim, 
-                                  rainfed = TRUE, 
-                                  filename = "inst\\extdata\\ec_out_beet",
-                                  overwrite = TRUE )
-
-#sugar beet using tmax
-ec_out_beet_max <- ecocrop_a_raster('sugar beet', 
-                                      st_tmin = st_tmin, 
-                                      st_tavg = st_tmax, #BEWARE using tmax for tavg
-                                      #st_tavg = st_tavg, 
-                                      st_prec = st_prec, 
-                                      rainfed = TRUE, 
-                                      filename = "inst\\extdata\\ec_out_beet_max",
-                                      overwrite = TRUE )
-
-ec_out_maize <- ecocrop_a_raster('maize', 
-                                   st_clim_all = st_clim, 
-                                   rainfed = TRUE, 
-                                   filename = "inst\\extdata\\ec_out_maize",
-                                   overwrite = TRUE )
-
-ec_out_barley <- ecocrop_a_raster('barley', 
-                                   st_clim_all = st_clim, 
-                                   rainfed = TRUE, 
-                                   filename = "inst\\extdata\\ec_out_barley",
-                                   overwrite = TRUE )
-#irrigated
-ec_out_potato_irig <- ecocrop_a_raster('potato',
-                                   st_clim_all = st_clim,
-                                   rainfed = FALSE,
-                                   filename = "inst\\extdata\\ec_out_potato_irig",
-                                   overwrite = TRUE )
-ec_out_maize_irig <- ecocrop_a_raster('maize',
-                                   st_clim_all = st_clim,
-                                   rainfed = FALSE,
-                                   filename = "inst\\extdata\\ec_out_maize_irig",
-                                   overwrite = TRUE )
-
-```
-
-# Initial experimenting with outputs
-
-### SORGHUM using tmean
-```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=3.5}
-#```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=8.5, fig.width=6}
-
-#read in files output by ecocrop
-ec_out_sorghum <- raster(system.file("extdata", "ec_out_sorghum.grd" , package = "climcropr"))
-ec_out_sorghum_max <- raster(system.file("extdata", "ec_out_sorghum_max.grd", package = "climcropr"))
-
-par(mar=c(0,0,0,0))
-plot(ec_out_sorghum, horizontal=TRUE, axes=FALSE, legend=TRUE, ext=ext)
-
-```
-
-### SORGHUM using tmax
-```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=3.5}
-
-par(mar=c(0,0,0,0))
-plot(ec_out_sorghum_max, horizontal=TRUE, axes=FALSE, ext=ext)
-
-```
-
-### SORGHUM difference between using tmean and tmax
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
-#mean - max
-par(mar=c(0,0,0,0))
-plot(ec_out_sorghum - ec_out_sorghum_max, horizontal=TRUE, axes=FALSE, ext=ext)
-
-```
-
-
-### SORGHUM mean - max for Africa
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
-par(mar=c(0,0,0,0))
-#set region
-#plot(ne_countries(continent=c('Africa','Asia')))
-plot(ne_countries(continent=c('Africa')), axes=FALSE)
-plot(ec_out_sorghum - ec_out_sorghum_max, add=TRUE, horizontal=TRUE, axes=FALSE)
-#add countries on top of raster
-plot(ne_countries(continent='Africa'), add=TRUE, border='grey', lwd=0.5)
-
-```
-
-### potato using tmean
-```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=3.5}
-#```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=8.5, fig.width=6}
-
-#read in files output by ecocrop
-ec_out_potato <- raster(system.file("extdata", "ec_out_potato.grd", package = "climcropr"))
-ec_out_potato_max <- raster(system.file("extdata", "ec_out_potato_max.grd", package = "climcropr"))
-
-par(mar=c(0,0,0,0))
-plot(ec_out_potato, horizontal=TRUE, axes=FALSE, legend=TRUE, ext=ext)
-
-```
-
-### potato using tmax
-```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=3.5}
-
-par(mar=c(0,0,0,0))
-plot(ec_out_potato_max, horizontal=TRUE, axes=FALSE, ext=ext)
-
-```
-
-### potato difference between using tmean and tmax
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
-#mean - max
-par(mar=c(0,0,0,0))
-plot(ec_out_potato - ec_out_potato_max, horizontal=TRUE, axes=FALSE, ext=ext)
-
-```
-
-
-### potato mean - max for Africa
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
-par(mar=c(0,0,0,0))
-#set region
-#plot(ne_countries(continent=c('Africa','Asia')))
-plot(ne_countries(continent=c('Africa')), axes=FALSE)
-plot(ec_out_potato - ec_out_potato_max, add=TRUE, horizontal=TRUE, axes=FALSE)
-#add countries on top of raster
-plot(ne_countries(continent='Africa'), add=TRUE, border='grey', lwd=0.5)
-
-```
-
-### beet using tmean
-```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=3.5}
-#```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=8.5, fig.width=6}
-
-#read in files output by ecocrop
-ec_out_beet <- raster(system.file("extdata", "ec_out_beet.grd", package = "climcropr"))
-ec_out_beet_max <- raster(system.file("extdata", "ec_out_beet_max.grd", package = "climcropr"))
-
-par(mar=c(0,0,0,0))
-plot(ec_out_beet, horizontal=TRUE, axes=FALSE, legend=TRUE, ext=ext)
-
-```
-
-### beet using tmax
-```{r, echo=FALSE, warnings=FALSE, message=FALSE, fig.height=3.5}
-
-par(mar=c(0,0,0,0))
-plot(ec_out_beet_max, horizontal=TRUE, axes=FALSE, ext=ext)
-
-```
-
-### beet difference between using tmean and tmax
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
-#mean - max
-par(mar=c(0,0,0,0))
-plot(ec_out_beet - ec_out_beet_max, horizontal=TRUE, axes=FALSE, ext=ext)
-
-```
-
-
-### beet mean - max for Africa
-```{r, echo=FALSE, warnings=FALSE, message=FALSE}
-
-par(mar=c(0,0,0,0))
-#set region
-#plot(ne_countries(continent=c('Africa','Asia')))
-plot(ne_countries(continent=c('Africa')), axes=FALSE)
-plot(ec_out_beet - ec_out_beet_max, add=TRUE, horizontal=TRUE, axes=FALSE)
-#add countries on top of raster
-plot(ne_countries(continent='Africa'), add=TRUE, border='grey', lwd=0.5)
-
-```

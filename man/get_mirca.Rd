@@ -7,7 +7,7 @@
 get_mirca(cropname, rainfed = TRUE, plot = TRUE, cache = TRUE)
 }
 \arguments{
-\item{cropname}{a MIRCA2000 crop name, see \code{\link{df_crop}} for a full
+\item{cropname}{a MIRCA2000 crop name, see \code{\link{df_mirca}} for a full
 list. Fuzzy string matching via \code{base::agrep} is done.}
 
 \item{rainfed}{default=TRUE, FALSE for irrigated}

@@ -34,7 +34,6 @@ ext <- extent(-180,180,-60,80)
 ### Comparing ecocrop predictions with MIRCA crop maps at 0.5 degree resolution
 
 
-This is a data driven document with hidden code that generates the figures. 
 
 
 ```{r, eval=TRUE, echo=FALSE}
@@ -149,4 +148,28 @@ plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
 ```
 
 
+### soil ph suitability maps 
+### 0/1 
 
+```{r, eval=TRUE, echo=FALSE}
+
+# extent object for use in plots
+ext <- raster::extent(-180,180,-40,75)
+
+test_crops <- c('potato','broom-corn','maize','barley')
+
+for(cropnum in 1:length(test_crops))
+{
+  cropname <- test_crops[cropnum]
+  
+  rst <- suit_soil_ph(cropname, plot=FALSE)
+  
+      par(mar=c(0,0,2,0)) #bltr
+      plot(rst, main=paste0(cropname," soil suit"), ext=ext)
+      plot(ne_countries(), add=TRUE, border='grey', lwd=0.1)
+  
+}
+
+
+
+```
