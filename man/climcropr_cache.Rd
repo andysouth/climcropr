@@ -4,14 +4,14 @@
 \alias{climcropr_cache}
 \title{Manage Cached climcropr Files}
 \description{
-Manage cached `climcropr` files with \pkg{hoardr}
+Manage cached \pkg{climcropr} files with \pkg{hoardr}
 }
 \details{
-The dafault cache directory is
-\code{file.path(rappdirs::user_cache_dir(), "R/climcropr")}, but you can set
-your own path using \code{cache_path_set()}
+The dafault cache directory can be discovered by using
+\code{`file.path(rappdirs::user_cache_dir(), "R/climcropr")`}. However,
+users may define their own path using \code{cache_path_set()}.
 
-\code{cache_delete} only accepts 1 file name, while \code{cache_delete_all}
+\code{cache_delete} only accepts one file name, while \code{cache_delete_all}
 doesn't accept any names, but deletes all files. For deleting many specific
 files, use \code{cache_delete} in an \code{\link[base]{lapply}()} type call.
 }
