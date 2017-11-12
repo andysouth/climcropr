@@ -21,4 +21,3 @@ Suggests: knitr,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
-Encoding: UTF-8
