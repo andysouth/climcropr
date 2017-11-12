@@ -31,7 +31,7 @@ information on these data.
 \note{
 The data used in this package are downloaded from:
 
-\url{ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/}
+\url{https://hessenbox-a10.rz.uni-frankfurt.de/filestable/MlF3MWNLb2VGQ1h1NXpiZGNOV2Ux/data/MIRCA2000/harvested_area_grids}
 }
 \examples{
 rst_mir <- get_mirca("potatoes", rainfed = TRUE)

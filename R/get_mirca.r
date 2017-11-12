@@ -114,21 +114,18 @@ get_mirca <- function(cropname,
   # check files that may exist locally in the cache_dir before downloading -----
 
   if (isTRUE(cache)) {
-    cache_dir <- rappdirs::user_cache_dir("climcropr")
-    if (!dir.exists(cache_dir)) {
-      dir.create(rappdirs::user_cache_dir(appname = "climcropr",
-                                          appauthor = "climcropr"),
-                 recursive = TRUE)
+    if (!dir.exists(climcropr_cache$cache_path_get())) {
+      climcropr_cache$mkdir()
     }
   } else {
-    cache_dir <- tempdir()
+    climcropr_cache$cache_path_set("climcropr", type = tempdir())
   }
 
   # filter downloaded ----------------------------------------------------------
 
   # which files are locally available?
   cache_dir_contents <-
-    list.files(cache_dir, pattern = "asc.gz$")
+    list.files(climcropr_cache$cache_path_get(), pattern = "asc.gz$")
 
   # which files requested need to be downloaded?
   dl_file <- file_name[!(file_name %in% cache_dir_contents)]

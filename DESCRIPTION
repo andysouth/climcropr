@@ -12,12 +12,17 @@ Depends: R (>= 2.1.0)
 Imports:
   curl,
   dismo,
+  dplyr,
+  hoardr,
+  ncdf4,
   SDMTools,
+  stringr,
   rappdirs,
   raster,
   utils
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    rmarkdown,
-    testthat
+  rnaturalearth,
+  rmarkdown,
+  testthat
 VignetteBuilder: knitr
