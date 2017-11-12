@@ -52,7 +52,7 @@
 #' @note
 #' The data used in this package are downloaded from:
 #'
-#' \url{ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/}
+#' \url{https://hessenbox-a10.rz.uni-frankfurt.de/filestable/MlF3MWNLb2VGQ1h1NXpiZGNOV2Ux/data/MIRCA2000/harvested_area_grids}
 #'
 #' @export
 #'
@@ -141,10 +141,10 @@ get_mirca <- function(cropname,
     message(" \nDownloading requested MIRCA2000 file for ", rain, " ",
             tolower(cropname), ".\n")
 
-    mirca_ftp <-
-      "ftp://ftp.rz.uni-frankfurt.de/pub/uni-frankfurt/physische_geographie/hydrologie/public/data/MIRCA2000/harvested_area_grids/"
+    mirca_https <-
+      "https://hessenbox-a10.rz.uni-frankfurt.de/open/MlF3MWNLb2VGQ1h1NXpiZGNOV2Ux/data/MIRCA2000/harvested_area_grids/"
 
-    dl_file <- paste0(mirca_ftp, dl_file)
+    dl_file <- paste0(mirca_https, dl_file)
 
     tryCatch(
       utils::download.file(
