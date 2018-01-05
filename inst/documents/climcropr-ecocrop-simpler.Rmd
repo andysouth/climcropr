@@ -31,27 +31,54 @@ ext <- extent(-180,180,-60,80)
 
 ```
 
+Draft paper. 
+Journal options :
+
+1. Env modelling and software : they encourage short communications of < 3000 words. 4.4.
+2. Agricultural and Forest Meteorology : Ramirez & other relevant recent papers. 3.9.
+3. Agricultural systems :	3 most recent Agmip papers in. 2.5.
+
 ## Abstract
-We describe a relatively simple approach for investigating the responses to climate change of the global distributions of hundreds of crops.
+We describe a simple, generic, mechanistic approach for investigating the broad responses to climate change of the global distributions of hundreds of crops.
 
-The large changes predicted in high-end climate scenarios are outside of the tolerances of many existing crops where they are currently grown. Potential adaptation strategies include growing crops in new areas that become suitable under a changed climate and stopping growing in areas that become unsuitable.
+We use temperature and rainfall requirements stored in the FAO ecocrop database to assess crop suitability by comparison with predicted monthly climate data. Our method is based on, and simpler than, existing Ecocrop modelling approaches.   
 
-There are a wide range of existing approaches for predicting the response of crop distributions to climate change. These differ in whether they are statistical or mechanistic and in the level of detail they include. There is a trade off between this level of detail and the generality of application in terms of numbers of crops and geographic area. Detailed models, e.g. representing the growth of crops daily, have data requirements that  restrict their application to very few crops and to restricted geographic areas. A relatively simple mechanistic approach based upon the temperature and precipitation requirements of hundreds of crops held in the FAO EcoCrop database was developed more than 15 years ago. This modeling approach, also termed EcoCrop, was implemented in both GIS and a package in the statistical language R. A more recent paper describes the application of a modified version of this approach to a single crop, Sorghum. 
+Our method predicts if an area is suitable or not (0/1), rather than predicting a suitability value between 0 and 1
 
-The existing ecocrop model has not been applied to a large number of crops at large geographic extents even though the potential to do this is one of the advanatges of it's simplicity.
+We apply this simpler method to X crops at a global scale and test results against MIRCA harvested area data for the year 2000.
 
-We describe an even simpler method than the ecocrop model for predicting crop suitability based upon the FAO ecocrop database. This new simple method produces better true positive rates than the original ecocrop model when tested against MIRCA harvested area data for the year 2000.
+This new simpler method produces better true positive rates than the original ecocrop model when tested against the MIRCA data. 
 
-Some of the details in the original ecocrop modelling approach seem not to be justified by these tests against field data. 
+Existing ecocrop models have not been applied to a large number of crops at large geographic extents even though the potential to do this is one of the advantages of its simplicity.
 
-The new simpler method simply predicts if an area is suitable or not (0/1), rather than predicting a suitability value between 0 and 1. It aims for a conservative approach, to be able to exclude areas that are unsuitable with some confidence, while being less concerned that some unsuitable areas are classed as suitable. [todo I'm not sure about that sentence]
-
-This new approach is both simpler, more transparent and more open. We provide a documented R package implementing the method, including methods to test against field data.
+This new approach is both simpler and more transparent. We provide a documented R package implementing the method, including methods to test against field data.
 
 ~ end of abstract
 
+[@Ramirez-Villegas2013] sorghum paper
+[@Anderson2015] differences in global crop models and maps
+[@Hijmans2012] diva-gis manual
+[@Hijmans2017] dismo R package
+[@Estes2013] comparing mechanistic and empirical crop models
+[@Holzkamper2015] climate change impacts on maize based on 3 different modelling approaches
+[@Iizumi2015] how do weather influence croppping area and intensity
+[@Leff2004] geographic distribution of major crops
+[@Mueller2017] global gridded crop model evaluation
+[@Porter2014] IPCC AR5 agriculture chapter
+[@Portmann2010] MIRCA crop maps
+
+
 ## Introduction
-The FAO ecocrop database holds data for more than 2500 crops including requirements for temperature, rainfall and soils based upon expert judgement. The ecocrop modelling approach estimates suitability for crops based on temperature and precipitation using these requirements[@Ramirez-Villegas2013]. The ecocrop modelling approach has been implemented in a number of slightly different ways and can be run from an R package and Diva-GIS. Ecocrop the modelling is designed to be simpler than other crop models allowing it to be applied to a wider range of crops and situations. 
+
+Changes in temperature and rainfall predicted in high-end climate scenarios are outside of the tolerances of many existing crops in many of the areas where they are currently grown ?[@Porter2014]. Potential adaptation strategies include growing crops in new areas that become suitable under a changed climate and stopping growing certain crops in areas that become unsuitable. Global assessments of likely impacts on crops and the potential for these adaptation strategies would be aided by an ability to predict suitability of areas for a wide range of crops at the global scale.  
+
+There are a wide range of existing approaches for predicting the response of crop distributions to climate change [?refs]. These differ in whether they are statistical or mechanistic and in the level of detail they include. There is a trade off between this level of detail and the generality of application in terms of numbers of crops and geographic area. Detailed models, e.g. representing the growth of crops daily, have data requirements that  restrict their application to very few crops and to restricted geographic areas. 
+
+
+
+A relatively simple mechanistic approach based upon the temperature and precipitation requirements of hundreds of crops held in the FAO EcoCrop database was developed more than 15 years ago. This modeling approach, also termed EcoCrop, was implemented in both GIS and a package in the statistical language R. A more recent paper describes the application of a modified version of this approach to a single crop, Sorghum[@Ramirez-Villegas2013]. 
+
+The FAO ecocrop database holds data for more than 2500 crops including requirements for temperature, rainfall and soils based upon expert knowledge. The ecocrop modelling approach estimates suitability for crops based on temperature and precipitation using these requirements[@Ramirez-Villegas2013]. The ecocrop modelling approach has been implemented in a number of slightly different ways and can be run from an R package[@Hijmans2017] and Diva-GIS[@Hijmans2012]. Ecocrop the model is designed to be simpler than other crop models allowing it to be applied to a wider range of crops and situations. 
 
 In summary the ecocrop the modelling approach :
 1. Calculates a mean of the minimum and maximum crop growth cycle
@@ -59,36 +86,39 @@ In summary the ecocrop the modelling approach :
 3. Finds whether there are 'duration' consecutive months in between the ecocrop temperature limits
 4. Finds whether there is a concurrent 'duration' period where the total precipitation is between the ecocrop rainfall requirements of the crop.  
 
-This is a broad summary of the ecocrop model as implemented within the R package dismo and with Diva-GIS.
+This is a summary of the ecocrop model as implemented within the R package dismo and within Diva-GIS.
 
-In addition the model uses 'optimal' temperature and precipitation limits specified in FAO ecocrop to develop an index of suitability per month, the best month and the value of the index in the best month.
+The original ecocrop model uses 'optimal' temperature and precipitation limits specified in FAO ecocrop to develop an index of suitability per month, the best month and the value of the index in the best month.
 
 Ecocrop the model as implemented in this way has not been well tested against empirical data.
 
-For what is supposed to be a simple modelling approach the method becomes quite tricky and not very transparent.
+The existing ecocrop modelling approach involves a number of steps that are not entirely straightforward and, we would argue, are not well justified. 
 
-Firstly it doesn't seem very mechanistic to me that a mean of the minimum and maximum crop growth cycles is used as one of the most influential parameters. For example for maize the minimum and maximum crop growth cycles are 65 days and 365 days which round to 3 months and 12 months. The ecocrop model thus assesses temperatures for a 7 month growth cycle. The figure below shows the minimum and maximum crop growth cycles stored within ecocrop for some important crops.
+Firstly a mean of the minimum and maximum crop growth cycles is used as one of the most influential parameters. For example for maize the minimum and maximum crop growth cycles are 65 days and 365 days which round to 3 months and 12 months. The ecocrop model thus assesses temperatures for a 7 month growth cycle. The figure below shows the minimum and maximum crop growth cycles stored within ecocrop for some important crops.
 
 Secondly the crop parameters as specified in the FAO ecocrop database are necessarily very broad. Whilst they are based on expert judgement they cannot hope to capture the majority of the processes that influence the suitability of an area for a crop. For this reason a more realistic goal than trying to predict a suitability score is to try to predict which areas are definitely not suitable for a crop. This also has the advantage that predicted absence is easier than a suitability score to test against global crop data. 
 
+We aim to move towards a simpler more straightforward method.
+
+
 ## Methods
 
-A simpler, more transparent, method could allow us to use both the minimum and maximum growth cycles and to develop predictions of which areas are not suitable for a crop.
 
 The proposed method is : 
 
 1. Use the minimum crop growth cycle to assess whether there is a minimum period within the year within the crop temperature limits that could allow the crop to grow. 
 2. Use the maximum crop growth cycle to assess whether there is a period that could allow the crop to get sufficient water. Trials have shown that using either the maximum crop growth cycle to assess temperature or the minimum crop growth cycle to assess rainfall leads to the exclusion of unrealistic areas (e.g. excluding maize from most of Europe).
 
-The base ecocrop predictions have some aspects that also look wrong for example they too predict that maize will not grow in Europe. This is also the problem that Nicole had making predictions far into the future, the ecocrop method of using the mean growing cycle to find time periods without low temperatures was excluding moderately northern latitudes.
-
-
+The base ecocrop predictions have some aspects that also look wrong for example they too predict that maize will not grow in Europe, the ecocrop method of using the mean growing cycle to find time periods without low temperatures excludes moderately northern latitudes.
 
 
 
 
 TODO
 ~ I need to justify advantages over a statistical approach (statistical works on where crops are grown not on where they could be grown)
+
+Cut from above :
+It aims for a conservative approach, to be able to exclude areas that are unsuitable with some confidence, while being less concerned that some unsuitable areas are classed as suitable. [todo I'm not sure about that sentence]
 
 
 ##### Table 1 : The new simpler method has a better true positive rate than ecocrop for rainfed crops. Comparing global predictions for the year 2000 to Mirca.
@@ -491,7 +521,7 @@ temporary citations to start ref list
 [@Anderson2015] differences in global crop models and maps
 [@Hijmans2012] diva-gis manual
 [@Estes2013] comparing mechanistic and empirical crop models
-[@Holzkamper2015a] climate cahnge impacts on maize based on 3 different modelling approaches
+[@Holzkamper2015a] climate change impacts on maize based on 3 different modelling approaches
 [@Iizumi2015a] how do weather influence croppping area and intensity
 [@Leff2004a] geographic distribution of major crops
 [@Muller2017a] global gridded crop model evaluation
